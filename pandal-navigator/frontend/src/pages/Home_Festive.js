@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { MapPin, Map, Star, Clock, Users, Navigation } from 'lucide-react';
+import { MapPin, Route, Star, Clock, Users, Navigation } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Home = () => {
@@ -134,7 +134,7 @@ const Home = () => {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center space-x-2">
-                    <Map className="h-5 w-5" />
+                    <Route className="h-5 w-5" />
                     <span>পূজার রুট পরিকল্পনা করুন</span>
                   </div>
                 )}

@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const { clerkMiddleware } = require('@clerk/express');
 require('dotenv').config();
 
 // Import routes
@@ -13,6 +14,7 @@ const eateryRoutes = require('./routes/eateryRoutes');
 const foodPlaceRoutes = require('./routes/foodPlaces');
 const routeRoutes = require('./routes/routeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const webhookRoutes = require('./routes/webhookRoutes');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -41,6 +43,9 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Clerk authentication middleware
+app.use(clerkMiddleware());
 
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -77,6 +82,7 @@ app.use('/api/eateries', eateryRoutes);
 app.use('/api/food-places', foodPlaceRoutes);
 app.use('/api/routes', routeRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 // 404 handler for undefined routes
 app.use('*', (req, res) => {

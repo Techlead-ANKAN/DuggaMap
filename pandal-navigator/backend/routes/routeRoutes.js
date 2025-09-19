@@ -12,7 +12,7 @@ const {
   getRoutesByArea,
   optimizeRoute
 } = require('../controllers/routeController');
-const { protect } = require('../middleware/auth');
+const { protect } = require('../middleware/clerkAuth');
 
 const router = express.Router();
 

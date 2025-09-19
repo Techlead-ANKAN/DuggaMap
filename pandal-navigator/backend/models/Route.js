@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-const mongoose = require('mongoose');
-
 const routeSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.ObjectId,

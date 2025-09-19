@@ -12,7 +12,7 @@ const {
   getPopularPandals,
   getPandalsByArea
 } = require('../controllers/pandalController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, protectAdmin } = require('../middleware/clerkAuth');
 
 const router = express.Router();
 
@@ -55,8 +55,8 @@ router.get('/:id/reviews', getPandalReviews);
 router.put('/:id/crowd', protect, updateCrowdLevel);
 
 // Admin only routes
-router.post('/', protect, authorize('admin'), pandalValidation, createPandal);
-router.put('/:id', protect, authorize('admin'), updatePandal);
-router.delete('/:id', protect, authorize('admin'), deletePandal);
+router.post('/', protectAdmin, pandalValidation, createPandal);
+router.put('/:id', protectAdmin, updatePandal);
+router.delete('/:id', protectAdmin, deletePandal);
 
 module.exports = router;

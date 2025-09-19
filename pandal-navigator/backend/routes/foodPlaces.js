@@ -12,7 +12,7 @@ const {
   getFoodPlacesNearPandal
 } = require('../controllers/foodPlaces');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, protectAdmin } = require('../middleware/clerkAuth');
 
 const router = express.Router();
 
@@ -29,8 +29,8 @@ router.get('/:id', getFoodPlace);
 router.use(protect);
 
 // Admin routes
-router.post('/', authorize('admin'), createFoodPlace);
-router.put('/:id', authorize('admin'), updateFoodPlace);
-router.delete('/:id', authorize('admin'), deleteFoodPlace);
+router.post('/', protectAdmin, createFoodPlace);
+router.put('/:id', protectAdmin, updateFoodPlace);
+router.delete('/:id', protectAdmin, deleteFoodPlace);
 
 module.exports = router;

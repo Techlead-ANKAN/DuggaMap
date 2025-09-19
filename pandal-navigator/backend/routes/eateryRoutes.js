@@ -13,7 +13,7 @@ const {
   getPopularEateries,
   getEateriesByCuisine
 } = require('../controllers/eateryController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, protectAdmin } = require('../middleware/clerkAuth');
 
 const router = express.Router();
 
@@ -60,8 +60,8 @@ router.get('/:id/reviews', getEateryReviews);
 router.put('/:id/wait-time', protect, updateWaitTime);
 
 // Admin only routes
-router.post('/', protect, authorize('admin'), eateryValidation, createEatery);
-router.put('/:id', protect, authorize('admin'), updateEatery);
-router.delete('/:id', protect, authorize('admin'), deleteEatery);
+router.post('/', protectAdmin, eateryValidation, createEatery);
+router.put('/:id', protectAdmin, updateEatery);
+router.delete('/:id', protectAdmin, deleteEatery);
 
 module.exports = router;

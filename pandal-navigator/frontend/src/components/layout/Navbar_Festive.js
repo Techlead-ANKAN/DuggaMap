@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/clerk-react';
-import { Menu, X, Home, MapPin, Utensils, LayoutDashboard, Navigation, Heart } from 'lucide-react';
+import { Menu, X, Home, MapPin, Utensils, LayoutDashboard, Route, Heart } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +12,7 @@ const Navbar = () => {
     { name: 'পান্ডেল', href: '/pandals', icon: MapPin, public: true },
     { name: 'খাবার', href: '/eateries', icon: Utensils, public: true },
     { name: 'ড্যাশবোর্ড', href: '/dashboard', icon: LayoutDashboard, public: false },
-    { name: 'রুট প্ল্যান', href: '/plan-route', icon: Navigation, public: false },
+    { name: 'রুট প্ল্যান', href: '/plan-route', icon: Route, public: false },
     { name: 'পছন্দের', href: '/favorites', icon: Heart, public: false },
   ];
 
