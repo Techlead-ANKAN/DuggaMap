@@ -3,38 +3,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🎨 Festive Design System - Durga Puja Navigator */
+/* 🎨 Elegant Minimal Design System - Durga Puja Navigator */
 
 :root {
-  /* 🔴 Primary Colors */
-  --vermillion: #E34234;
-  --vermillion-dark: #C73E32;
-  --vermillion-light: #F56B5C;
+  /* � Primary Colors - Subtle Blues */
+  --primary: #475569;
+  --primary-dark: #334155;
+  --primary-light: #64748b;
   
-  /* 🟡 Secondary Colors */
-  --gold: #FFD700;
-  --gold-dark: #E6C200;
-  --gold-light: #FFF04D;
+  /* 🟡 Accent Colors - Soft Gold */
+  --accent: #d4a574;
+  --accent-dark: #b8935f;
+  --accent-light: #e4c085;
   
-  /* 🟠 Accent Colors */
-  --marigold: #FFB84D;
-  --marigold-dark: #E6A644;
-  --marigold-light: #FFC566;
+  /* 🟠 Secondary Colors - Warm Orange */
+  --secondary: #e08860;
+  --secondary-dark: #d16835;
+  --secondary-light: #eda078;
   
-  /* ⚪ Neutral Colors */
-  --white: #F5F5F5;
-  --off-white: #FAFAFA;
-  --cream: #FFF8E7;
+  /* ⚪ Neutral Colors - Clean Grays */
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
   
-  /* 🌙 Contrast Colors */
-  --midnight-blue: #1A1A40;
-  --midnight-blue-light: #2A2A50;
-  --dark-gray: #333333;
-  
-  /* 🎭 Festive Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--vermillion) 0%, var(--gold) 100%);
-  --gradient-festive: linear-gradient(45deg, var(--marigold) 0%, var(--gold) 50%, var(--vermillion) 100%);
-  --gradient-smoke: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(227, 66, 52, 0.1) 100%);
+  /* 🎭 Elegant Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  --gradient-subtle: linear-gradient(45deg, var(--gray-50) 0%, var(--white) 100%);
+  --gradient-warm: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
 }
 
 /* 🌟 Base Styles */
@@ -44,10 +45,38 @@
   box-sizing: border-box;
 }
 
+/* 🎨 White Background Removal */
+.remove-white-bg {
+  mix-blend-mode: multiply;
+  filter: contrast(1.2) brightness(1.1);
+}
+
+.transparent-white {
+  mix-blend-mode: screen;
+  filter: contrast(1.3) brightness(0.9);
+}
+
+.logo-transparent {
+  mix-blend-mode: multiply;
+  filter: contrast(1.2) brightness(1.1) saturate(1.1);
+  background: transparent;
+}
+
+/* Alternative white removal methods */
+.logo-darken {
+  mix-blend-mode: darken;
+  filter: contrast(1.3) brightness(1.2);
+}
+
+.logo-overlay {
+  mix-blend-mode: overlay;
+  filter: contrast(1.1) brightness(1.1) saturate(1.2);
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, var(--cream) 0%, var(--off-white) 100%);
-  color: var(--midnight-blue);
+  background: var(--gradient-warm);
+  color: var(--gray-800);
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -66,73 +95,74 @@ code {
 .text-festive-xl {
   font-size: 2.5rem;
   font-weight: 700;
-  background: var(--gradient-festive);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .text-festive-lg {
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--vermillion);
+  color: var(--primary);
 }
 
 .text-festive-md {
   font-size: 1.25rem;
   font-weight: 500;
-  color: var(--midnight-blue);
+  color: var(--gray-700);
 }
 
 /* 🎯 Button Styles */
 .btn-festive {
   @apply px-6 py-3 rounded-full font-semibold text-white transition-all duration-300 transform hover:scale-105 active:scale-95;
   background: var(--gradient-primary);
-  box-shadow: 0 4px 15px rgba(227, 66, 52, 0.3);
+  box-shadow: 0 4px 15px rgba(71, 85, 105, 0.2);
   border: none;
   cursor: pointer;
 }
 
 .btn-festive:hover {
-  box-shadow: 0 6px 20px rgba(227, 66, 52, 0.4);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.3);
 }
 
 .btn-festive-secondary {
   @apply px-4 py-2 rounded-full font-medium transition-all duration-300;
-  background: var(--gold);
-  color: var(--midnight-blue);
-  border: 2px solid var(--gold);
+  background: var(--accent);
+  color: var(--white);
+  border: 2px solid var(--accent);
 }
 
 .btn-festive-secondary:hover {
   background: transparent;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .btn-festive-outline {
   @apply px-4 py-2 rounded-full font-medium transition-all duration-300;
   background: transparent;
-  color: var(--vermillion);
-  border: 2px solid var(--vermillion);
+  color: var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .btn-festive-outline:hover {
-  background: var(--vermillion);
+  background: var(--primary);
   color: white;
 }
 
 /* 🏮 Card Styles */
 .card-festive {
   @apply bg-white rounded-2xl p-6 shadow-lg;
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 248, 231, 0.8) 100%);
+  border: 1px solid var(--gray-200);
+  background: var(--gradient-subtle);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
 .card-festive:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(227, 66, 52, 0.15);
+  box-shadow: 0 12px 30px rgba(71, 85, 105, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -147,13 +177,13 @@ code {
 /* 🌸 Input Styles */
 .input-festive {
   @apply w-full px-4 py-3 rounded-xl border-2 focus:outline-none transition-all duration-300;
-  border-color: rgba(255, 215, 0, 0.3);
+  border-color: var(--gray-200);
   background: rgba(255, 255, 255, 0.9);
 }
 
 .input-festive:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
 }
 
 /* 🎭 Animation Classes */
@@ -272,24 +302,24 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--cream);
+  background: var(--gray-100);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gold);
+  background: var(--accent);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-dark);
+  background: var(--accent-dark);
 }
 
 /* 🌺 Loading Spinner */
 .loader-dhunuchi {
   width: 50px;
   height: 50px;
-  border: 4px solid var(--cream);
-  border-top: 4px solid var(--gold);
+  border: 4px solid var(--gray-200);
+  border-top: 4px solid var(--accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -306,7 +336,7 @@ code {
 /* 🎭 Bottom Sheet Styles */
 .bottom-sheet {
   @apply fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-300;
-  border-top: 3px solid var(--gold);
+  border-top: 3px solid var(--accent);
   max-height: 80vh;
   overflow-y: auto;
 }
@@ -342,7 +372,7 @@ code {
 
 /* 🎯 Utility Classes */
 .bg-gradient-festive {
-  background: var(--gradient-festive);
+  background: var(--gradient-primary);
 }
 
 .bg-gradient-primary {
@@ -350,23 +380,23 @@ code {
 }
 
 .text-vermillion {
-  color: var(--vermillion);
+  color: var(--primary);
 }
 
 .text-gold {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .text-midnight {
-  color: var(--midnight-blue);
+  color: var(--gray-800);
 }
 
 .border-gold {
-  border-color: var(--gold);
+  border-color: var(--accent);
 }
 
 .shadow-festive {
-  box-shadow: 0 8px 25px rgba(227, 66, 52, 0.15);
+  box-shadow: 0 8px 25px rgba(71, 85, 105, 0.1);
 }
 
 /* Legacy styles for compatibility */

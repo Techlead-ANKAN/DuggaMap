@@ -28,28 +28,28 @@ const Footer = () => {
                 </div>
                 <div>
                   <h3 className="font-festive text-xl font-bold text-gold">
-                    দুর্গা পূজা পান্ডেল নেভিগেটর
+                    Durga Puja Pandals Navigator
                   </h3>
                   <p className="text-sm text-gray-300">
-                    আপনার পূজার সাথী
+                    Your Puja companion
                   </p>
                 </div>
               </div>
               
               <p className="text-gray-300 mb-6 max-w-md">
-                কলকাতার সবচেয়ে সুন্দর পান্ডেলগুলো আবিষ্কার করুন এবং আপনার পূজার যাত্রাকে আরও আনন্দদায়ক করে তুলুন। মা দুর্গার আশীর্বাদে সবার জন্য নিরাপদ ও সুখময় পূজা।
+                Discover Kolkata's most beautiful pandals and make your Puja journey more joyful. Wishing a safe and blessed festival to all.
               </p>
 
               <div className="flex items-center space-x-2 text-gold">
                 <Heart className="h-4 w-4 fill-current" />
-                <span className="text-sm">মা দুর্গার প্রেমে তৈরি</span>
+                <span className="text-sm">Made with love for Durga Puja</span>
               </div>
             </div>
 
             {/* Quick Links */}
             <div>
               <h4 className="font-festive text-lg font-semibold text-gold mb-4">
-                দ্রুত লিংক
+                Quick Links
               </h4>
               <ul className="space-y-2">
                 <li>
@@ -58,7 +58,7 @@ const Footer = () => {
                     className="text-gray-300 hover:text-gold transition-colors duration-300 flex items-center space-x-2"
                   >
                     <Star className="h-4 w-4" />
-                    <span>সব পান্ডেল</span>
+                    <span>All Pandals</span>
                   </Link>
                 </li>
                 <li>
@@ -67,7 +67,7 @@ const Footer = () => {
                     className="text-gray-300 hover:text-gold transition-colors duration-300 flex items-center space-x-2"
                   >
                     <span>🍽️</span>
-                    <span>খাবারের দোকান</span>
+                    <span>Eateries</span>
                   </Link>
                 </li>
                 <li>
@@ -76,7 +76,7 @@ const Footer = () => {
                     className="text-gray-300 hover:text-gold transition-colors duration-300 flex items-center space-x-2"
                   >
                     <span>🗺️</span>
-                    <span>রুট পরিকল্পনা</span>
+                    <span>Plan Route</span>
                   </Link>
                 </li>
                 <li>
@@ -85,7 +85,7 @@ const Footer = () => {
                     className="text-gray-300 hover:text-gold transition-colors duration-300 flex items-center space-x-2"
                   >
                     <Heart className="h-4 w-4" />
-                    <span>পছন্দের তালিকা</span>
+                    <span>Favorites</span>
                   </Link>
                 </li>
               </ul>
@@ -100,8 +100,8 @@ const Footer = () => {
                 <li className="flex items-start space-x-3">
                   <MapPin className="h-5 w-5 text-gold mt-0.5" />
                   <div>
-                    <p className="text-gray-300">কলকাতা, পশ্চিমবঙ্গ</p>
-                    <p className="text-sm text-gray-400">ভারত</p>
+                    <p className="text-gray-300">Kolkata, West Bengal</p>
+                    <p className="text-sm text-gray-400">India</p>
                   </div>
                 </li>
                 <li className="flex items-center space-x-3">
@@ -135,7 +135,7 @@ const Footer = () => {
               {/* Copyright */}
               <div className="text-center md:text-left">
                 <p className="text-gray-300 text-sm">
-                  © {currentYear} দুর্গা পূজা পান্ডেল নেভিগেটর। সমস্ত অধিকার সংরক্ষিত।
+                  © {currentYear} Durga Puja Pandals Navigator. All rights reserved.
                 </p>
                 <p className="text-gray-400 text-xs mt-1">
                   Made with ❤️ for Durga Puja devotees
@@ -145,10 +145,10 @@ const Footer = () => {
               {/* Blessing */}
               <div className="text-center">
                 <p className="text-gold font-festive text-lg">
-                  মা দুর্গা সবার মঙ্গল করুন 🙏
+                  May Maa Durga bless everyone 🙏
                 </p>
                 <p className="text-gray-400 text-xs">
-                  শারদীয়া শুভেচ্ছা
+                  Shubho Sharadiya
                 </p>
               </div>
             </div>

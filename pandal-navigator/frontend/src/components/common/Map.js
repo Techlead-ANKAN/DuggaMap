@@ -26,7 +26,7 @@ const createCustomIcon = (color = 'red', type = 'pandal') => {
 
 const Map = ({ 
   pandals = [], 
-  eateries = [], 
+  foodplaces = [], 
   routes = [], 
   center = [22.5726, 88.3639], // Kolkata coordinates
   zoom = 12,
@@ -73,8 +73,9 @@ const Map = ({
     // Add pandal markers
     if (activeLayer === 'all' || activeLayer === 'pandals') {
       pandals.forEach(pandal => {
-        if (pandal.location?.coordinates) {
-          const [lng, lat] = pandal.location.coordinates;
+        if (pandal.location?.latitude && pandal.location?.longitude) {
+          const lat = pandal.location.latitude;
+          const lng = pandal.location.longitude;
           const marker = L.marker([lat, lng], {
             icon: createCustomIcon('#f97316', 'pandal')
           }).addTo(mapInstanceRef.current);
@@ -82,7 +83,7 @@ const Map = ({
           marker.bindPopup(`
             <div class="p-3 min-w-[200px]">
               <h3 class="font-semibold text-gray-900 mb-2">${pandal.name}</h3>
-              <p class="text-sm text-gray-600 mb-2">${pandal.area || ''}</p>
+              <p class="text-sm text-gray-600 mb-2">${pandal.areaCategory || ''}</p>
               <p class="text-sm text-gray-600 mb-3">${pandal.description?.substring(0, 100)}...</p>
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
@@ -105,10 +106,11 @@ const Map = ({
     }
 
     // Add eatery markers
-    if (activeLayer === 'all' || activeLayer === 'eateries') {
-      eateries.forEach(eatery => {
-        if (eatery.location?.coordinates) {
-          const [lng, lat] = eatery.location.coordinates;
+    if (activeLayer === 'all' || activeLayer === 'foodplaces') {
+      foodplaces.forEach(eatery => {
+        if (eatery.location?.latitude && eatery.location?.longitude) {
+          const lat = eatery.location.latitude;
+          const lng = eatery.location.longitude;
           const marker = L.marker([lat, lng], {
             icon: createCustomIcon('#10b981', 'eatery')
           }).addTo(mapInstanceRef.current);
@@ -116,7 +118,7 @@ const Map = ({
           marker.bindPopup(`
             <div class="p-3 min-w-[200px]">
               <h3 class="font-semibold text-gray-900 mb-2">${eatery.name}</h3>
-              <p class="text-sm text-gray-600 mb-2">${eatery.area || ''}</p>
+              <p class="text-sm text-gray-600 mb-2">${eatery.location?.address || ''}</p>
               <p class="text-sm text-gray-600 mb-2">Cuisine: ${eatery.cuisine || 'Various'}</p>
               <p class="text-sm text-gray-600 mb-3">Price: ${eatery.priceRange || 'N/A'}</p>
               <div class="flex items-center justify-between">
@@ -138,7 +140,7 @@ const Map = ({
         }
       });
     }
-  }, [pandals, eateries, activeLayer]);
+  }, [pandals, foodplaces, activeLayer]);
 
   // Update routes when data changes
   useEffect(() => {
@@ -244,14 +246,14 @@ const Map = ({
               Pandals
             </button>
             <button
-              onClick={() => setActiveLayer('eateries')}
+              onClick={() => setActiveLayer('foodplaces')}
               className={`px-3 py-1 text-sm rounded ${
-                activeLayer === 'eateries' 
+                activeLayer === 'foodplaces' 
                   ? 'bg-green-600 text-white' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Eateries
+              Foodplaces
             </button>
             {routes.length > 0 && (
               <button

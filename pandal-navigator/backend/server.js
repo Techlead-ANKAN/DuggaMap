@@ -79,7 +79,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/pandals', pandalRoutes);
 app.use('/api/eateries', eateryRoutes);
-app.use('/api/food-places', foodPlaceRoutes);
+app.use('/api/foodplaces', foodPlaceRoutes);
 app.use('/api/routes', routeRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/webhooks', webhookRoutes);

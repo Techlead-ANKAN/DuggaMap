@@ -7,21 +7,19 @@ const pandalSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Name cannot exceed 100 characters']
   },
+  address: {
+    type: String,
+    required: [true, 'Address is required'],
+    trim: true
+  },
   location: {
-    address: {
-      type: String,
-      required: [true, 'Address is required'],
-      trim: true
-    },
     latitude: {
       type: Number,
-      required: [true, 'Latitude is required'],
       min: [-90, 'Latitude must be between -90 and 90'],
       max: [90, 'Latitude must be between -90 and 90']
     },
     longitude: {
       type: Number,
-      required: [true, 'Longitude is required'],
       min: [-180, 'Longitude must be between -180 and 180'],
       max: [180, 'Longitude must be between -180 and 180']
     }
@@ -30,31 +28,6 @@ const pandalSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Area category is required'],
     enum: ['North Kolkata', 'South Kolkata', 'Central Kolkata', 'East Kolkata', 'West Kolkata']
-  },
-  description: {
-    type: String,
-    trim: true,
-    maxlength: [500, 'Description cannot exceed 500 characters']
-  },
-  images: [{
-    type: String,
-    trim: true
-  }],
-  rating: {
-    type: Number,
-    min: [0, 'Rating cannot be negative'],
-    max: [5, 'Rating cannot exceed 5'],
-    default: 0
-  },
-  openingTime: {
-    type: String,
-    required: [true, 'Opening time is required'],
-    match: [/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Please provide valid time in HH:MM format']
-  },
-  closingTime: {
-    type: String,
-    required: [true, 'Closing time is required'],
-    match: [/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Please provide valid time in HH:MM format']
   }
 }, {
   timestamps: true,
@@ -65,8 +38,7 @@ const pandalSchema = new mongoose.Schema({
 // Indexes for geospatial queries and performance
 pandalSchema.index({ 'location.latitude': 1, 'location.longitude': 1 });
 pandalSchema.index({ areaCategory: 1 });
-pandalSchema.index({ rating: -1 });
-pandalSchema.index({ name: 'text', description: 'text' });
+pandalSchema.index({ name: 'text' });
 
 // Instance method to calculate distance from a point
 pandalSchema.methods.distanceFrom = function(lat, lng) {

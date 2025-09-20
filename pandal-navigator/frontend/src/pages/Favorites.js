@@ -16,7 +16,7 @@ const Favorites = () => {
           >
             <ArrowLeft className="h-6 w-6 text-vermillion" />
           </button>
-          <h1 className="text-3xl font-festive text-vermillion">প্রিয় তালিকা</h1>
+          <h1 className="text-3xl font-festive text-vermillion">Favorites</h1>
         </div>
 
         {/* Coming Soon */}
@@ -24,7 +24,7 @@ const Favorites = () => {
           <div className="text-6xl mb-4">
             <Heart className="h-16 w-16 text-vermillion mx-auto fill-current" />
           </div>
-          <h2 className="text-2xl font-festive text-vermillion mb-2">শীঘ্রই আসছে</h2>
+          <h2 className="text-2xl font-festive text-vermillion mb-2">Coming Soon</h2>
           <p className="text-gray-600">Favorites feature coming soon in our festive update!</p>
         </div>
       </div>

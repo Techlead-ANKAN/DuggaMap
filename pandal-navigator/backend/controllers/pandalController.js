@@ -21,7 +21,7 @@ const getPandals = async (req, res, next) => {
     } = req.query;
 
     // Build query
-    let query = { isActive: true };
+    let query = {};
 
     // Text search
     if (search) {
@@ -124,8 +124,7 @@ const getPandals = async (req, res, next) => {
 const getPandal = async (req, res, next) => {
   try {
     const pandal = await Pandal.findOne({
-      _id: req.params.id,
-      isActive: true
+      _id: req.params.id
     });
 
     if (!pandal) {
@@ -334,7 +333,7 @@ const getPopularPandals = async (req, res, next) => {
   try {
     const { limit = 10 } = req.query;
 
-    const pandals = await Pandal.find({ isActive: true })
+    const pandals = await Pandal.find()
       .sort({
         'ratings.averageRating': -1,
         'ratings.totalReviews': -1,
@@ -366,8 +365,7 @@ const getPandalsByArea = async (req, res, next) => {
     const skip = (pageNum - 1) * limitNum;
 
     const pandals = await Pandal.find({
-      'location.area': { $regex: area, $options: 'i' },
-      isActive: true
+      'location.area': { $regex: area, $options: 'i' }
     })
       .sort({ name: 1 })
       .skip(skip)
@@ -375,8 +373,7 @@ const getPandalsByArea = async (req, res, next) => {
       .lean();
 
     const total = await Pandal.countDocuments({
-      'location.area': { $regex: area, $options: 'i' },
-      isActive: true
+      'location.area': { $regex: area, $options: 'i' }
     });
 
     res.status(200).json({

@@ -16,7 +16,7 @@ const Profile = () => {
           >
             <ArrowLeft className="h-6 w-6 text-vermillion" />
           </button>
-          <h1 className="text-3xl font-festive text-vermillion">প্রোফাইল</h1>
+          <h1 className="text-3xl font-festive text-vermillion">Profile</h1>
         </div>
 
         {/* Coming Soon */}
@@ -24,7 +24,7 @@ const Profile = () => {
           <div className="text-6xl mb-4">
             <User className="h-16 w-16 text-vermillion mx-auto" />
           </div>
-          <h2 className="text-2xl font-festive text-vermillion mb-2">শীঘ্রই আসছে</h2>
+          <h2 className="text-2xl font-festive text-vermillion mb-2">Stay tuned</h2>
           <p className="text-gray-600">Profile feature coming soon in our festive update!</p>
         </div>
       </div>

@@ -16,7 +16,7 @@ const RoutePlanner = () => {
           >
             <ArrowLeft className="h-6 w-6 text-vermillion" />
           </button>
-          <h1 className="text-3xl font-festive text-vermillion">রুট পরিকল্পনা</h1>
+          <h1 className="text-3xl font-festive text-vermillion">Route Planner</h1>
         </div>
 
         {/* Coming Soon */}
@@ -25,7 +25,7 @@ const RoutePlanner = () => {
             <MapPin className="text-vermillion" />
             <Navigation className="text-gold" />
           </div>
-          <h2 className="text-2xl font-festive text-vermillion mb-2">শীঘ্রই আসছে</h2>
+          <h2 className="text-2xl font-festive text-vermillion mb-2">Stay tuned</h2>
           <p className="text-gray-600">Route planning feature coming soon in our festive update!</p>
         </div>
       </div>

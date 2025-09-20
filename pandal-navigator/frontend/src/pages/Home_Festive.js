@@ -14,25 +14,25 @@ const Home = () => {
 
   // Quick start locations for Kolkata areas
   const quickLocations = [
-    { name: 'উত্তর কলকাতা', value: 'North Kolkata', icon: '🏛️' },
-    { name: 'দক্ষিণ কলকাতা', value: 'South Kolkata', icon: '🌆' },
-    { name: 'সল্ট লেক', value: 'Salt Lake', icon: '🏢' },
-    { name: 'হাওড়া', value: 'Howrah', icon: '🌉' },
+  { name: 'North Kolkata', value: 'North Kolkata', icon: '🏛️' },
+  { name: 'South Kolkata', value: 'South Kolkata', icon: '🌆' },
+  { name: 'Salt Lake', value: 'Salt Lake', icon: '🏢' },
+  { name: 'Howrah', value: 'Howrah', icon: '🌉' },
   ];
 
   const handleQuickStart = (location) => {
     setStartPoint(location);
-    toast.success(`${location} নির্বাচিত হয়েছে! 🎯`);
+    toast.success(`${location} selected! 🎯`);
   };
 
   const handlePlanRoute = async () => {
     if (!startPoint.trim()) {
-      toast.error('আপনার শুরুর স্থান নির্বাচন করুন');
+      toast.error('Please select your start location');
       return;
     }
 
     if (!isSignedIn) {
-      toast.error('রুট প্ল্যান করতে লগিন করুন');
+      toast.error('Please sign in to plan a route');
       navigate('/sign-in');
       return;
     }
@@ -44,13 +44,13 @@ const Home = () => {
       setTimeout(() => {
         setIsRouteLoading(false);
         navigate('/plan-route', { 
-          state: { startPoint, endPoint: endPoint || 'নিকটতম পান্ডেল' } 
+          state: { startPoint, endPoint: endPoint || 'Nearest Pandals' } 
         });
-        toast.success('আপনার পূজার রুট তৈরি হচ্ছে! 🛣️');
+        toast.success('Your Puja route is being prepared! 🛣️');
       }, 1500);
     } catch (error) {
       setIsRouteLoading(false);
-      toast.error('রুট তৈরিতে সমস্যা হয়েছে');
+      toast.error('Error creating route');
     }
   };
 
@@ -71,19 +71,19 @@ const Home = () => {
           <div className="mb-8 fade-in">
             {isSignedIn ? (
               <p className="text-lg text-vermillion mb-4">
-                স্বাগতম, {user?.firstName || 'ভক্ত'}! 🙏
+                Welcome, {user?.firstName || 'Devotee'}! 🙏
               </p>
             ) : (
               <p className="text-lg text-midnight-blue mb-4">
-                মা দুর্গার আশীর্বাদে আপনাকে স্বাগতম 🙏
+                Welcome to the Durga Puja Pandals Navigator 🙏
               </p>
             )}
             
             <h1 className="font-festive text-festive-xl mb-4">
-              দুর্গা পূজা পান্ডেল নেভিগেটর
+              Durga Puja Pandals Navigator
             </h1>
             <p className="text-festive-md text-midnight-blue max-w-3xl mx-auto">
-              কলকাতার সবচেয়ে সুন্দর পান্ডেলগুলো খুঁজে পান এবং আপনার পূজার যাত্রা পরিকল্পনা করুন
+              Discover the most beautiful pandals in Kolkata and plan your Puja journey
             </p>
           </div>
 
@@ -91,7 +91,7 @@ const Home = () => {
           <div className="card-festive max-w-2xl mx-auto mb-12 slide-up">
             <div className="text-center mb-6">
               <h2 className="font-festive text-festive-lg mb-2">
-                আপনার পূজার রুট পরিকল্পনা করুন
+                Plan your Puja route
               </h2>
               <div className="w-16 h-1 bg-gradient-primary mx-auto rounded-full"></div>
             </div>
@@ -102,7 +102,7 @@ const Home = () => {
                 <MapPin className="absolute left-3 top-3 h-5 w-5 text-vermillion" />
                 <input
                   type="text"
-                  placeholder="আপনার শুরুর স্থান লিখুন..."
+                  placeholder="Enter your start location..."
                   value={startPoint}
                   onChange={(e) => setStartPoint(e.target.value)}
                   className="input-festive pl-10"
@@ -114,7 +114,7 @@ const Home = () => {
                 <Navigation className="absolute left-3 top-3 h-5 w-5 text-gold" />
                 <input
                   type="text"
-                  placeholder="গন্তব্য (ঐচ্ছিক - নিকটতম পান্ডেল খুঁজে দেওয়া হবে)"
+                  placeholder="Destination (optional - will find nearest pandals)"
                   value={endPoint}
                   onChange={(e) => setEndPoint(e.target.value)}
                   className="input-festive pl-10"
@@ -130,12 +130,12 @@ const Home = () => {
                 {isRouteLoading ? (
                   <div className="flex items-center justify-center space-x-2">
                     <div className="loader-dhunuchi w-5 h-5"></div>
-                    <span>রুট তৈরি হচ্ছে...</span>
+                    <span>Creating route...</span>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center space-x-2">
                     <Route className="h-5 w-5" />
-                    <span>পূজার রুট পরিকল্পনা করুন</span>
+                    <span>Plan Puja Route</span>
                   </div>
                 )}
               </button>
@@ -144,7 +144,7 @@ const Home = () => {
 
           {/* Quick Start Locations */}
           <div className="mb-12">
-            <h3 className="font-festive text-festive-md mb-6">দ্রুত নির্বাচন</h3>
+            <h3 className="font-festive text-festive-md mb-6">Quick Picks</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
               {quickLocations.map((location, index) => (
                 <button
@@ -168,7 +168,7 @@ const Home = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="font-festive text-festive-lg mb-4">
-              আমাদের বিশেষ সুবিধাসমূহ
+              Our Key Features
             </h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
           </div>
@@ -180,10 +180,10 @@ const Home = () => {
                 <MapPin className="h-8 w-8 text-white" />
               </div>
               <h3 className="font-festive text-lg font-semibold mb-2 text-midnight-blue">
-                স্মার্ট রুট পরিকল্পনা
+                Smart Route Planning
               </h3>
               <p className="text-midnight-blue opacity-80">
-                সর্বোত্তম রুট খুঁজে পান এবং সময় বাঁচান
+                Find optimal routes and save time
               </p>
             </div>
 
@@ -193,10 +193,10 @@ const Home = () => {
                 <Clock className="h-8 w-8 text-white" />
               </div>
               <h3 className="font-festive text-lg font-semibold mb-2 text-midnight-blue">
-                ভোগের সময়সূচী
+                Puja Schedule
               </h3>
               <p className="text-midnight-blue opacity-80">
-                প্রতিটি পান্ডেলের ভোগের সময় জেনে নিন
+                Know the aarti timings of each pandal
               </p>
             </div>
 
@@ -206,10 +206,10 @@ const Home = () => {
                 <Users className="h-8 w-8 text-white" />
               </div>
               <h3 className="font-festive text-lg font-semibold mb-2 text-midnight-blue">
-                ভিড়ের তথ্য
+                Crowd Info
               </h3>
               <p className="text-midnight-blue opacity-80">
-                রিয়েল-টাইম ভিড়ের অবস্থা দেখুন
+                View real-time crowd conditions
               </p>
             </div>
           </div>
@@ -220,10 +220,10 @@ const Home = () => {
       <section className="py-16 px-4 bg-gradient-festive text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-festive text-3xl md:text-4xl font-bold mb-4">
-            এই দুর্গা পূজায় আনন্দে ভরপুর হয়ে উঠুন
+            Make this Durga Puja unforgettable
           </h2>
           <p className="text-lg mb-8 opacity-90">
-            কলকাতার সেরা পান্ডেলগুলো আবিষ্কার করুন এবং অবিস্মরণীয় স্মৃতি তৈরি করুন
+            Discover Kolkata's best pandals and create lasting memories
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -231,7 +231,7 @@ const Home = () => {
               to="/pandals" 
               className="btn-festive-secondary inline-flex items-center justify-center space-x-2"
             >
-              <span>সব পান্ডেল দেখুন</span>
+              <span>View all Pandals</span>
               <Star className="h-5 w-5" />
             </Link>
             
@@ -240,7 +240,7 @@ const Home = () => {
                 to="/sign-up" 
                 className="btn-festive-outline bg-white/10 backdrop-blur-sm inline-flex items-center justify-center space-x-2"
               >
-                <span>যোগদান করুন</span>
+                <span>Join Us</span>
                 <Users className="h-5 w-5" />
               </Link>
             )}

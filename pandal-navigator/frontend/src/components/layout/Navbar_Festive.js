@@ -8,12 +8,12 @@ const Navbar = () => {
   const location = useLocation();
 
   const navigation = [
-    { name: 'হোম', href: '/', icon: Home, public: true },
-    { name: 'পান্ডেল', href: '/pandals', icon: MapPin, public: true },
-    { name: 'খাবার', href: '/eateries', icon: Utensils, public: true },
-    { name: 'ড্যাশবোর্ড', href: '/dashboard', icon: LayoutDashboard, public: false },
-    { name: 'রুট প্ল্যান', href: '/plan-route', icon: Route, public: false },
-    { name: 'পছন্দের', href: '/favorites', icon: Heart, public: false },
+  { name: 'Home', href: '/', icon: Home, public: true },
+  { name: 'Pandals', href: '/pandals', icon: MapPin, public: true },
+  { name: 'Eateries', href: '/eateries', icon: Utensils, public: true },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, public: false },
+  { name: 'Plan Route', href: '/plan-route', icon: Route, public: false },
+  { name: 'Favorites', href: '/favorites', icon: Heart, public: false },
   ];
 
   const isActive = (href) => {
@@ -32,7 +32,7 @@ const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-festive text-lg font-bold text-vermillion">
-                দুর্গা পূজা
+                Durga Puja
               </span>
               <span className="text-xs text-midnight-blue opacity-75 -mt-1">
                 Navigator
@@ -86,7 +86,7 @@ const Navbar = () => {
             <SignedOut>
               <SignInButton mode="modal">
                 <button className="btn-festive-outline">
-                  লগিন
+                  Sign In
                 </button>
               </SignInButton>
             </SignedOut>
@@ -168,7 +168,7 @@ const Navbar = () => {
               <SignedOut>
                 <SignInButton mode="modal">
                   <button className="w-full btn-festive text-center">
-                    লগিন করুন
+                    Sign In
                   </button>
                 </SignInButton>
               </SignedOut>
@@ -177,7 +177,7 @@ const Navbar = () => {
                 <div className="flex items-center space-x-3 px-4 py-3">
                   <UserButton />
                   <span className="text-midnight-blue font-medium">
-                    আপনার প্রোফাইল
+                    Your Profile
                   </span>
                 </div>
               </SignedIn>

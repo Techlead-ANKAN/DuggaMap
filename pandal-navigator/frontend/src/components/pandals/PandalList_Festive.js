@@ -17,11 +17,11 @@ const PandalList = () => {
 
   // Filters
   const filters = [
-    { id: 'all', label: 'সব পান্ডেল', icon: '🏛️' },
-    { id: 'famous', label: 'বিখ্যাত পান্ডেল', icon: '⭐' },
-    { id: 'nearby', label: 'কাছাকাছি', icon: '📍' },
-    { id: 'crowded', label: 'জনপ্রিয়', icon: '👥' },
-    { id: 'peaceful', label: 'শান্ত পরিবেশ', icon: '🕊️' }
+    { id: 'all', label: 'All Pandals', icon: '🏛️' },
+    { id: 'famous', label: 'Famous Pandals', icon: '⭐' },
+    { id: 'nearby', label: 'Nearby', icon: '📍' },
+    { id: 'crowded', label: 'Crowded', icon: '👥' },
+    { id: 'peaceful', label: 'Peaceful', icon: '🕊️' }
   ];
 
   useEffect(() => {
@@ -43,8 +43,8 @@ const PandalList = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching pandals:', err);
-      setError('পান্ডেলের তথ্য লোড করতে সমস্যা হয়েছে');
-      toast.error('পান্ডেলের তথ্য লোড করতে সমস্যা হয়েছে');
+  setError('Error loading pandal data');
+  toast.error('Error loading pandal data');
     } finally {
       setLoading(false);
     }
@@ -96,7 +96,7 @@ const PandalList = () => {
 
   const toggleFavorite = async (pandalId) => {
     if (!user) {
-      toast.error('পছন্দের তালিকায় যোগ করতে লগইন করুন');
+  toast.error('Please sign in to add to favorites');
       return;
     }
 
@@ -108,24 +108,24 @@ const PandalList = () => {
           newSet.delete(pandalId);
           return newSet;
         });
-        toast.success('পছন্দের তালিকা থেকে সরানো হয়েছে');
+  toast.success('Removed from favorites');
       } else {
         await api.post('/favorites', { pandalId });
         setFavorites(prev => new Set([...prev, pandalId]));
-        toast.success('পছন্দের তালিকায় যোগ করা হয়েছে');
+  toast.success('Added to favorites');
       }
     } catch (err) {
-      console.error('Error toggling favorite:', err);
-      toast.error('সমস্যা হয়েছে, আবার চেষ্টা করুন');
+  console.error('Error toggling favorite:', err);
+  toast.error('Something went wrong, please try again');
     }
   };
 
   const getCrowdLevelText = (level) => {
     switch (level) {
-      case 'low': return { text: 'শান্ত', color: 'text-green-600', bg: 'bg-green-100' };
-      case 'medium': return { text: 'মাঝারি', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-      case 'high': return { text: 'ভিড়', color: 'text-red-600', bg: 'bg-red-100' };
-      default: return { text: 'অজানা', color: 'text-gray-600', bg: 'bg-gray-100' };
+      case 'low': return { text: 'Calm', color: 'text-green-600', bg: 'bg-green-100' };
+      case 'medium': return { text: 'Moderate', color: 'text-yellow-600', bg: 'bg-yellow-100' };
+      case 'high': return { text: 'Crowded', color: 'text-red-600', bg: 'bg-red-100' };
+      default: return { text: 'Unknown', color: 'text-gray-600', bg: 'bg-gray-100' };
     }
   };
 
@@ -134,8 +134,8 @@ const PandalList = () => {
       <div className="min-h-screen bg-gradient-festive flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin text-6xl mb-4">🪔</div>
-          <h2 className="font-festive text-2xl text-gold mb-2">পান্ডেল খোঁজা হচ্ছে...</h2>
-          <p className="text-vermillion">মা দুর্গার আশীর্বাদে অপেক্ষা করুন</p>
+          <h2 className="font-festive text-2xl text-gold mb-2">Searching for pandals...</h2>
+          <p className="text-vermillion">Please wait...</p>
         </div>
       </div>
     );
@@ -153,10 +153,10 @@ const PandalList = () => {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-festive text-4xl md:text-6xl font-bold mb-4">
-            পূজার পান্ডেল
+            Puja Pandals
           </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90">
-            কলকাতার সেরা দুর্গা পূজা পান্ডেলগুলো আবিষ্কার করুন
+            Discover the best Durga Puja pandals in Kolkata
           </p>
           
           {/* Search and Filter */}
@@ -167,15 +167,15 @@ const PandalList = () => {
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70 h-5 w-5" />
                   <input
                     type="text"
-                    placeholder="পান্ডেল বা এলাকার নাম লিখুন..."
+                    placeholder="Search by pandal or area..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
                   />
                 </div>
-                <button className="btn-primary px-6 py-3 rounded-xl flex items-center justify-center space-x-2">
+                  <button className="btn-primary px-6 py-3 rounded-xl flex items-center justify-center space-x-2">
                   <Filter className="h-5 w-5" />
-                  <span>ফিল্টার</span>
+                  <span>Filter</span>
                 </button>
               </div>
 
@@ -206,20 +206,20 @@ const PandalList = () => {
         {error ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">😢</div>
-            <h3 className="font-festive text-2xl text-gray-700 mb-2">সমস্যা হয়েছে</h3>
+            <h3 className="font-festive text-2xl text-gray-700 mb-2">Something went wrong</h3>
             <p className="text-gray-600 mb-6">{error}</p>
             <button 
               onClick={fetchPandals}
               className="btn-primary px-6 py-3 rounded-xl"
             >
-              আবার চেষ্টা করুন
+              Retry
             </button>
           </div>
         ) : filteredPandals.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="font-festive text-2xl text-gray-700 mb-2">কোনো পান্ডেল পাওয়া যায়নি</h3>
-            <p className="text-gray-600">অন্য কিছু খুঁজে দেখুন</p>
+            <h3 className="font-festive text-2xl text-gray-700 mb-2">No pandals found</h3>
+            <p className="text-gray-600">Try a different search</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -278,7 +278,7 @@ const PandalList = () => {
                     </div>
 
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {pandal.description || 'একটি সুন্দর দুর্গা পূজা পান্ডেল যেখানে মা দুর্গার মহিমা ফুটে উঠেছে।'}
+                      {pandal.description || 'A beautiful Durga Puja pandal showcasing craftsmanship and devotion.'}
                     </p>
 
                     {/* Special Features */}
@@ -312,14 +312,14 @@ const PandalList = () => {
 
                     {/* Actions */}
                     <div className="flex space-x-3">
-                      <Link
+                        <Link
                         to={`/pandals/${pandal._id}`}
                         className="flex-1 btn-primary text-center py-2 rounded-xl text-sm font-medium"
                       >
-                        বিস্তারিত দেখুন
+                        View Details
                       </Link>
                       <button className="px-4 py-2 border-2 border-gold text-gold rounded-xl hover:bg-gold hover:text-white transition-colors duration-300 text-sm font-medium">
-                        রুটে যোগ করুন
+                        Add to Route
                       </button>
                     </div>
                   </div>
@@ -333,7 +333,7 @@ const PandalList = () => {
         {filteredPandals.length > 0 && filteredPandals.length % 9 === 0 && (
           <div className="text-center mt-12">
             <button className="btn-primary px-8 py-3 rounded-xl text-lg font-medium">
-              আরো পান্ডেল দেখুন
+            Load more pandals
             </button>
           </div>
         )}

@@ -6,27 +6,43 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: {
+          DEFAULT: '#475569',
+          dark: '#334155',
+          light: '#64748b',
+        },
+        accent: {
+          DEFAULT: '#d4a574',
+          dark: '#b8935f',
+          light: '#e4c085',
+        },
+        secondary: {
+          DEFAULT: '#e08860',
+          dark: '#d16835',
+          light: '#eda078',
+        },
+        // Legacy color mappings for compatibility
         vermillion: {
-          DEFAULT: '#E34234',
-          dark: '#C73E32',
-          light: '#F56B5C',
+          DEFAULT: '#475569',
+          dark: '#334155',
+          light: '#64748b',
         },
         gold: {
-          DEFAULT: '#FFD700',
-          dark: '#E6C200',
-          light: '#FFF04D',
+          DEFAULT: '#d4a574',
+          dark: '#b8935f',
+          light: '#e4c085',
         },
         marigold: {
-          DEFAULT: '#FFB84D',
-          dark: '#E6A644',
-          light: '#FFC566',
+          DEFAULT: '#e08860',
+          dark: '#d16835',
+          light: '#eda078',
         },
         'midnight-blue': {
-          DEFAULT: '#1A1A40',
-          light: '#2A2A50',
+          DEFAULT: '#1e293b',
+          light: '#334155',
         },
-        cream: '#FFF8E7',
-        'off-white': '#FAFAFA',
+        cream: '#f8fafc',
+        'off-white': '#ffffff',
       },
       fontFamily: {
         festive: ['Kalam', 'cursive'],
@@ -46,8 +62,8 @@ module.exports = {
           '50%': { transform: 'translateY(-20px) rotate(10deg)', opacity: '1' },
         },
         dhunuchiGlow: {
-          '0%': { boxShadow: '0 0 20px rgba(255, 215, 0, 0.5)' },
-          '100%': { boxShadow: '0 0 40px rgba(255, 215, 0, 0.8)' },
+          '0%': { boxShadow: '0 0 20px rgba(212, 165, 116, 0.5)' },
+          '100%': { boxShadow: '0 0 40px rgba(212, 165, 116, 0.8)' },
         },
         petalFall: {
           '0%': { transform: 'translateY(-100vh) rotate(0deg)', opacity: '1' },
@@ -67,9 +83,9 @@ module.exports = {
         },
       },
       backgroundImage: {
-        'festive-gradient': 'linear-gradient(135deg, #FFF8E7 0%, #FFB84D 50%, #E34234 100%)',
-        'gold-gradient': 'linear-gradient(135deg, #FFD700 0%, #FFF04D 100%)',
-        'vermillion-gradient': 'linear-gradient(135deg, #E34234 0%, #F56B5C 100%)',
+        'festive-gradient': 'linear-gradient(135deg, #f8fafc 0%, #e4c085 50%, #475569 100%)',
+        'gold-gradient': 'linear-gradient(135deg, #d4a574 0%, #e4c085 100%)',
+        'vermillion-gradient': 'linear-gradient(135deg, #475569 0%, #64748b 100%)',
       },
     },
   },

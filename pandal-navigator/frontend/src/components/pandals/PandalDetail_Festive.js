@@ -36,8 +36,8 @@ const PandalDetail = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching pandal details:', err);
-      setError('পান্ডেলের বিস্তারিত তথ্য লোড করতে সমস্যা হয়েছে');
-      toast.error('পান্ডেলের তথ্য লোড করতে সমস্যা হয়েছে');
+  setError('Error loading pandal details');
+  toast.error('Error loading pandal details');
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ const PandalDetail = () => {
 
   const toggleFavorite = async () => {
     if (!user) {
-      toast.error('পছন্দের তালিকায় যোগ করতে লগইন করুন');
+      toast.error('Please sign in to add to favorites');
       return;
     }
 
@@ -63,22 +63,22 @@ const PandalDetail = () => {
       if (isFavorite) {
         await api.delete(`/favorites/${id}`);
         setIsFavorite(false);
-        toast.success('পছন্দের তালিকা থেকে সরানো হয়েছে');
+        toast.success('Removed from favorites');
       } else {
         await api.post('/favorites', { pandalId: id });
         setIsFavorite(true);
-        toast.success('পছন্দের তালিকায় যোগ করা হয়েছে');
+        toast.success('Added to favorites');
       }
     } catch (err) {
       console.error('Error toggling favorite:', err);
-      toast.error('সমস্যা হয়েছে, আবার চেষ্টা করুন');
+      toast.error('Something went wrong, please try again');
     }
   };
 
   const shareHandler = async () => {
     const shareData = {
       title: pandal?.name,
-      text: `${pandal?.name} - ${pandal?.area} এ অবস্থিত একটি সুন্দর দুর্গা পূজা পান্ডেল`,
+      text: `${pandal?.name} - a beautiful Durga Puja pandal located in ${pandal?.area}`,
       url: window.location.href,
     };
 
@@ -87,11 +87,11 @@ const PandalDetail = () => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        toast.success('লিংক কপি করা হয়েছে!');
+        toast.success('Link copied!');
       }
     } catch (err) {
       console.error('Error sharing:', err);
-      toast.error('শেয়ার করতে সমস্যা হয়েছে');
+      toast.error('Error sharing');
     }
   };
 
@@ -137,8 +137,8 @@ const PandalDetail = () => {
       <div className="min-h-screen bg-gradient-festive flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin text-6xl mb-4">🪔</div>
-          <h2 className="font-festive text-2xl text-gold mb-2">তথ্য লোড হচ্ছে...</h2>
-          <p className="text-vermillion">মা দুর্গার আশীর্বাদে অপেক্ষা করুন</p>
+          <h2 className="font-festive text-2xl text-gold mb-2">Loading information...</h2>
+          <p className="text-vermillion">Please wait...</p>
         </div>
       </div>
     );
@@ -149,20 +149,20 @@ const PandalDetail = () => {
       <div className="min-h-screen bg-gradient-festive flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="text-6xl mb-4">😞</div>
-          <h2 className="font-festive text-2xl text-gray-700 mb-4">সমস্যা হয়েছে</h2>
+          <h2 className="font-festive text-2xl text-gray-700 mb-4">Something went wrong</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="space-y-3">
             <button
               onClick={fetchPandalDetails}
               className="w-full btn-primary py-3 rounded-xl"
             >
-              আবার চেষ্টা করুন
+              Retry
             </button>
             <button
               onClick={() => navigate('/pandals')}
               className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 transition-colors duration-300"
             >
-              পান্ডেল তালিকায় ফিরে যান
+              Back to Pandals
             </button>
           </div>
         </div>
@@ -183,7 +183,7 @@ const PandalDetail = () => {
             className="flex items-center space-x-2 text-gray-700 hover:text-vermillion transition-colors duration-300"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span className="font-medium">পিছনে যান</span>
+            <span className="font-medium">Back</span>
           </button>
         </div>
       </div>
@@ -261,25 +261,25 @@ const PandalDetail = () => {
                 <div className="text-center p-3 bg-gold/10 rounded-xl">
                   <Star className="h-6 w-6 text-gold mx-auto mb-1" />
                   <div className="font-bold text-gray-800">{pandal.rating || '4.5'}</div>
-                  <div className="text-sm text-gray-600">রেটিং</div>
+                  <div className="text-sm text-gray-600">Rating</div>
                 </div>
                 
                 <div className="text-center p-3 bg-vermillion/10 rounded-xl">
                   <Users className="h-6 w-6 text-vermillion mx-auto mb-1" />
                   <div className="font-bold text-gray-800">{crowdInfo.text}</div>
-                  <div className="text-sm text-gray-600">ভিড়ের অবস্থা</div>
+                  <div className="text-sm text-gray-600">Crowd</div>
                 </div>
                 
                 <div className="text-center p-3 bg-marigold/10 rounded-xl">
                   <Clock className="h-6 w-6 text-orange-600 mx-auto mb-1" />
-                  <div className="font-bold text-gray-800">খোলা</div>
-                  <div className="text-sm text-gray-600">এখন</div>
+                  <div className="font-bold text-gray-800">Open</div>
+                  <div className="text-sm text-gray-600">Now</div>
                 </div>
                 
                 <div className="text-center p-3 bg-green-100 rounded-xl">
                   <Gift className="h-6 w-6 text-green-600 mx-auto mb-1" />
-                  <div className="font-bold text-gray-800">বিনামূল্যে</div>
-                  <div className="text-sm text-gray-600">প্রবেশ</div>
+                  <div className="font-bold text-gray-800">Free</div>
+                  <div className="text-sm text-gray-600">Entry</div>
                 </div>
               </div>
 
@@ -287,34 +287,34 @@ const PandalDetail = () => {
               <div className="flex flex-wrap gap-3">
                 <button className="btn-primary px-6 py-3 rounded-xl flex items-center space-x-2">
                   <Navigation className="h-5 w-5" />
-                  <span>দিকনির্দেশনা</span>
+                  <span>Directions</span>
                 </button>
                 
                 <button className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition-colors duration-300 flex items-center space-x-2">
                   <Phone className="h-5 w-5" />
-                  <span>ফোন করুন</span>
+                  <span>Call</span>
                 </button>
                 
                 <button className="border-2 border-gold text-gold px-6 py-3 rounded-xl hover:bg-gold hover:text-white transition-colors duration-300 flex items-center space-x-2">
                   <Calendar className="h-5 w-5" />
-                  <span>রুটে যোগ করুন</span>
+                  <span>Add to Route</span>
                 </button>
               </div>
             </div>
 
             {/* Description */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h2 className="font-festive text-2xl font-bold text-gray-800 mb-4">বিবরণ</h2>
+              <h2 className="font-festive text-2xl font-bold text-gray-800 mb-4">Description</h2>
               <div className="text-gray-700 leading-relaxed">
                 <p className={showFullDescription ? '' : 'line-clamp-4'}>
-                  {pandal.description || `${pandal.name} একটি অসাধারণ দুর্গা পূজা পান্ডেল যেখানে মা দুর্গার মহিমা ও শক্তি ফুটে উঠেছে। এই পান্ডেলে ঐতিহ্যবাহী কারুকাজ ও আধুনিক শিল্পের এক অপূর্ব মেলবন্ধন দেখা যায়। প্রতি বছর হাজার হাজার ভক্ত এখানে মা দুর্গার আশীর্বাদ নিতে আসেন।`}
+                  {pandal.description || `${pandal.name} is a beautiful Durga Puja pandal showcasing traditional craftsmanship and devotion.`}
                 </p>
                 {pandal.description && pandal.description.length > 200 && (
                   <button
                     onClick={() => setShowFullDescription(!showFullDescription)}
                     className="text-vermillion hover:text-red-700 font-medium mt-2"
                   >
-                    {showFullDescription ? 'কম দেখুন' : 'আরো পড়ুন'}
+                    {showFullDescription ? 'Show less' : 'Read more'}
                   </button>
                 )}
               </div>
@@ -323,7 +323,7 @@ const PandalDetail = () => {
             {/* Special Features */}
             {pandal.specialFeatures && pandal.specialFeatures.length > 0 && (
               <div className="bg-white rounded-2xl shadow-xl p-6">
-                <h2 className="font-festive text-2xl font-bold text-gray-800 mb-4">বিশেষত্ব</h2>
+                <h2 className="font-festive text-2xl font-bold text-gray-800 mb-4">Highlights</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {pandal.specialFeatures.map((feature, index) => (
                     <div key={index} className="flex items-center space-x-3 p-3 bg-gold/10 rounded-xl">
@@ -338,10 +338,10 @@ const PandalDetail = () => {
             {/* Reviews Section */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-festive text-2xl font-bold text-gray-800">মতামত</h2>
+                <h2 className="font-festive text-2xl font-bold text-gray-800">Reviews</h2>
                 <button className="text-vermillion hover:text-red-700 font-medium flex items-center space-x-2">
                   <MessageCircle className="h-5 w-5" />
-                  <span>মতামত লিখুন</span>
+                  <span>Write a review</span>
                 </button>
               </div>
 
@@ -354,9 +354,9 @@ const PandalDetail = () => {
                         <Star key={i} className="h-4 w-4 fill-current" />
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500">• রমেশ বাবু</span>
+                    <span className="text-sm text-gray-500">• Ramesh Babu</span>
                   </div>
-                  <p className="text-gray-700">অসাধারণ সুন্দর পান্ডেল! মা দুর্গার মূর্তি দেখে মুগ্ধ হয়ে গেছি। সবার যাওয়া উচিত।</p>
+                  <p className="text-gray-700">Beautiful pandal! The idol is mesmerising. Highly recommended.</p>
                 </div>
 
                 <div className="border-l-4 border-gold pl-4">
@@ -367,9 +367,9 @@ const PandalDetail = () => {
                       ))}
                       <Star className="h-4 w-4 text-gray-300" />
                     </div>
-                    <span className="text-sm text-gray-500">• সুমিত্রা দেবী</span>
+                    <span className="text-sm text-gray-500">• Sumitra Devi</span>
                   </div>
-                  <p className="text-gray-700">খুব সুন্দর সাজানো। তবে একটু বেশি ভিড় ছিল। সকালে গেলে ভালো হবে।</p>
+                  <p className="text-gray-700">Very well decorated. It was a bit crowded; mornings are better.</p>
                 </div>
               </div>
             </div>
@@ -380,15 +380,15 @@ const PandalDetail = () => {
             
             {/* Timing & Contact */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h3 className="font-festive text-xl font-bold text-gray-800 mb-4">তথ্য</h3>
+              <h3 className="font-festive text-xl font-bold text-gray-800 mb-4">Info</h3>
               
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Clock className="h-5 w-5 text-gold" />
                   <div>
-                    <div className="font-medium text-gray-800">সময়</div>
+                    <div className="font-medium text-gray-800">Time</div>
                     <div className="text-sm text-gray-600">
-                      {pandal.timing || 'সকাল ৬টা - রাত ১২টা'}
+                      {pandal.timing || '6:00 AM - 12:00 AM'}
                     </div>
                   </div>
                 </div>
@@ -396,9 +396,9 @@ const PandalDetail = () => {
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-5 w-5 text-vermillion mt-1" />
                   <div>
-                    <div className="font-medium text-gray-800">ঠিকানা</div>
+                    <div className="font-medium text-gray-800">Address</div>
                     <div className="text-sm text-gray-600">
-                      {pandal.address || `${pandal.area}, কলকাতা`}
+                      {pandal.address || `${pandal.area}, Kolkata`}
                     </div>
                   </div>
                 </div>
@@ -407,7 +407,7 @@ const PandalDetail = () => {
                   <div className="flex items-center space-x-3">
                     <Phone className="h-5 w-5 text-green-600" />
                     <div>
-                      <div className="font-medium text-gray-800">ফোন</div>
+                      <div className="font-medium text-gray-800">Phone</div>
                       <div className="text-sm text-gray-600">{pandal.contact}</div>
                     </div>
                   </div>
@@ -417,7 +417,7 @@ const PandalDetail = () => {
 
             {/* Crowd Level Details */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h3 className="font-festive text-xl font-bold text-gray-800 mb-4">ভিড়ের তথ্য</h3>
+              <h3 className="font-festive text-xl font-bold text-gray-800 mb-4">Crowd Info</h3>
               
               <div className={`p-4 ${crowdInfo.bg} rounded-xl`}>
                 <div className="flex items-center space-x-3 mb-2">
@@ -430,28 +430,28 @@ const PandalDetail = () => {
               </div>
 
               <div className="mt-4 text-sm text-gray-500">
-                <p>💡 <strong>টিপস:</strong> সকাল ৭-৯টা এবং বিকাল ৪-৬টায় তুলনামূলক কম ভিড় থাকে।</p>
+                <p>💡 <strong>Tips:</strong> Mornings (7-9 AM) and late afternoons (4-6 PM) tend to be less crowded.</p>
               </div>
             </div>
 
             {/* Quick Actions */}
             <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h3 className="font-festive text-xl font-bold text-gray-800 mb-4">দ্রুত ক্রিয়া</h3>
+              <h3 className="font-festive text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
               
               <div className="space-y-3">
                 <button className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center space-x-2">
                   <Camera className="h-5 w-5" />
-                  <span>ছবি দেখুন</span>
+                  <span>View Photos</span>
                 </button>
                 
                 <button className="w-full bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition-colors duration-300 flex items-center justify-center space-x-2">
                   <ExternalLink className="h-5 w-5" />
-                  <span>ম্যাপে দেখুন</span>
+                  <span>View on Map</span>
                 </button>
                 
                 <button className="w-full border-2 border-gray-300 text-gray-700 py-3 rounded-xl hover:bg-gray-50 transition-colors duration-300 flex items-center justify-center space-x-2">
                   <Flag className="h-5 w-5" />
-                  <span>রিপোর্ট করুন</span>
+                  <span>Report</span>
                 </button>
               </div>
             </div>
@@ -463,10 +463,10 @@ const PandalDetail = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gold/20 p-4 z-50">
         <div className="max-w-7xl mx-auto flex space-x-4">
           <button className="flex-1 btn-primary py-3 rounded-xl font-medium">
-            এখনই যান
+            Go Now
           </button>
           <button className="flex-1 border-2 border-gold text-gold py-3 rounded-xl hover:bg-gold hover:text-white transition-colors duration-300 font-medium">
-            রুটে যোগ করুন
+            Add to Route
           </button>
         </div>
       </div>

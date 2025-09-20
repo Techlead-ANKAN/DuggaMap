@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { SignedIn, SignedOut, RedirectToSignIn, useAuth } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignIn, SignUp, useAuth } from '@clerk/clerk-react';
 
 // Import components
 import SplashScreen from './components/SplashScreen';
@@ -26,7 +26,30 @@ const ProtectedRoute = ({ children }) => {
     <>
       <SignedIn>{children}</SignedIn>
       <SignedOut>
-        <RedirectToSignIn />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md w-full space-y-8">
+            <div>
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Sign in to your account
+              </h2>
+              <p className="mt-2 text-center text-sm text-gray-600">
+                Access the Durga Puja Navigator
+              </p>
+            </div>
+            <div className="bg-white py-8 px-6 shadow rounded-lg">
+              <SignIn 
+                appearance={{
+                  theme: "classic",
+                  variables: {
+                    colorPrimary: "#f97316",
+                  }
+                }}
+                redirectUrl="/dashboard"
+                signUpUrl="/sign-up"
+              />
+            </div>
+          </div>
+        </div>
       </SignedOut>
     </>
   );
@@ -39,24 +62,22 @@ const AppContent = () => {
   const { isLoaded } = useAuth();
 
   useEffect(() => {
-    // Show splash screen only on first load
-    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
-    
-    if (hasSeenSplash || location.pathname !== '/') {
-      setShowSplash(false);
+    // Always show splash screen when visiting home page
+    if (location.pathname === '/') {
+      setShowSplash(true);
+      // No automatic timer - splash screen will only be hidden when SplashScreen component calls onFinish
     } else {
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-        sessionStorage.setItem('hasSeenSplash', 'true');
-      }, 4000);
-
-      return () => clearTimeout(timer);
+      setShowSplash(false);
     }
   }, [location.pathname]);
 
+  const handleSplashFinish = () => {
+    setShowSplash(false);
+  };
+
   // Show splash screen if needed
   if (showSplash && location.pathname === '/' && isLoaded) {
-    return <SplashScreen />;
+    return <SplashScreen onFinish={handleSplashFinish} />;
   }
 
   return (
@@ -68,8 +89,73 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/pandals" element={<PandalList />} />
           <Route path="/pandals/:id" element={<PandalDetail />} />
-          <Route path="/eateries" element={<EateryList />} />
-          <Route path="/eateries/:id" element={<EateryDetail />} />
+          <Route path="/foodplaces" element={<EateryList />} />
+          <Route path="/foodplaces/:id" element={<EateryDetail />} />
+          
+          {/* Auth Route */}
+          <Route
+            path="/sign-in"
+            element={
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-md w-full space-y-8">
+                  <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                      Sign in to your account
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-gray-600">
+                      Access the Durga Puja Navigator
+                    </p>
+                  </div>
+                  <div className="bg-white py-8 px-6 shadow rounded-lg">
+                    <SignIn 
+                      appearance={{
+                        theme: "classic",
+                        variables: {
+                          colorPrimary: "#f97316",
+                        }
+                      }}
+                      redirectUrl="/dashboard"
+                      routing="path"
+                      path="/sign-in"
+                      signUpUrl="/sign-up"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+          />
+          
+          <Route
+            path="/sign-up"
+            element={
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-md w-full space-y-8">
+                  <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                      Create your account
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-gray-600">
+                      Join the Durga Puja Navigator
+                    </p>
+                  </div>
+                  <div className="bg-white py-8 px-6 shadow rounded-lg">
+                    <SignUp 
+                      appearance={{
+                        theme: "classic",
+                        variables: {
+                          colorPrimary: "#f97316",
+                        }
+                      }}
+                      redirectUrl="/dashboard"
+                      routing="path"
+                      path="/sign-up"
+                      signInUrl="/sign-in"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+          />
           
           {/* Protected Routes */}
           <Route

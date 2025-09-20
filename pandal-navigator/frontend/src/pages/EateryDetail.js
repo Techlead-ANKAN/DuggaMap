@@ -18,13 +18,13 @@ const EateryDetail = () => {
           >
             <ArrowLeft className="h-6 w-6 text-vermillion" />
           </button>
-          <h1 className="text-3xl font-festive text-vermillion">খাবারের বিবরণ</h1>
+          <h1 className="text-3xl font-festive text-vermillion">Eatery Details</h1>
         </div>
 
         {/* Coming Soon */}
         <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
           <div className="text-6xl mb-4">🍽️</div>
-          <h2 className="text-2xl font-festive text-vermillion mb-2">শীঘ্রই আসছে</h2>
+          <h2 className="text-2xl font-festive text-vermillion mb-2">Stay tuned</h2>
           <p className="text-gray-600">Eatery details coming soon in our festive update!</p>
         </div>
       </div>

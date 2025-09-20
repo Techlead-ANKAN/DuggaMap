@@ -20,6 +20,7 @@ const PandalList = () => {
   
   // State
   const [pandals, setPandals] = useState([]);
+  const [foodplaces, setFoodplaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'map'
@@ -48,7 +49,7 @@ const PandalList = () => {
     }
   }, [isSignedIn, user]);
 
-  // Fetch pandals
+  // Fetch pandals and foodplaces
   const fetchPandals = async () => {
     setLoading(true);
     setError(null);
@@ -67,12 +68,18 @@ const PandalList = () => {
         if (params[key] === undefined) delete params[key];
       });
 
-      const response = await apiService.pandals.getAll(params);
-      setPandals(response.data.data);
+      // Fetch both pandals and foodplaces
+      const [pandalsResponse, foodplacesResponse] = await Promise.all([
+        apiService.pandals.getAll(params),
+        fetch('/api/foodplaces').then(res => res.json())
+      ]);
+
+      setPandals(pandalsResponse.data.data);
+      setFoodplaces(foodplacesResponse.data || []);
     } catch (error) {
-      console.error('Error fetching pandals:', error);
-      setError('Failed to load pandals. Please try again.');
-      toast.error('Failed to load pandals');
+      console.error('Error fetching data:', error);
+      setError('Failed to load data. Please try again.');
+      toast.error('Failed to load data');
     } finally {
       setLoading(false);
     }
@@ -294,6 +301,7 @@ const PandalList = () => {
               <div className="mb-8">
                 <Map 
                   pandals={pandals}
+                  foodplaces={foodplaces}
                   height="600px"
                   onPandalClick={handlePandalClick}
                 />
