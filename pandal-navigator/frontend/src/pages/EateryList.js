@@ -84,57 +84,34 @@ const EateryList = () => {
             {foodplaces.map((foodplace) => (
               <div key={foodplace._id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-xl font-semibold text-gray-900 flex-1">
-                      {foodplace.name}
-                    </h3>
-                    <div className="flex items-center text-yellow-500">
-                      <FaStar className="h-4 w-4" />
-                      <span className="ml-1 text-sm font-medium">
-                        {foodplace.rating || 'N/A'}
-                      </span>
-                    </div>
-                  </div>
+                  {/* Restaurant Name */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {foodplace.name}
+                  </h3>
                   
-                  <div className="flex items-center text-gray-600 mb-3">
-                    <FaMapMarkerAlt className="h-4 w-4 mr-2" />
-                    <span className="text-sm">{foodplace.address}</span>
+                  {/* Address */}
+                  <div className="flex items-start text-gray-600 mb-4">
+                    <FaMapMarkerAlt className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{foodplace.address || 'Address not available'}</span>
                   </div>
 
-                  {foodplace.cuisine && (
-                    <div className="mb-3">
-                      <div className="flex flex-wrap gap-1">
-                        {foodplace.cuisine.map((type, index) => (
-                          <span 
-                            key={index}
-                            className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full"
-                          >
-                            {type}
-                          </span>
-                        ))}
+                  {/* Coordinates */}
+                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                    <div className="text-sm text-gray-600">
+                      <div className="flex justify-between mb-1">
+                        <span className="font-medium">Latitude:</span>
+                        <span className="font-mono">{foodplace.location?.latitude?.toFixed(6) || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Longitude:</span>
+                        <span className="font-mono">{foodplace.location?.longitude?.toFixed(6) || 'N/A'}</span>
                       </div>
                     </div>
-                  )}
+                  </div>
 
-                  {foodplace.priceRange && (
-                    <div className="mb-4">
-                      <span className="text-sm font-medium text-gray-700">
-                        Price Range: {foodplace.priceRange}
-                      </span>
-                    </div>
-                  )}
-
-                  {foodplace.nearbyPandals && foodplace.nearbyPandals.length > 0 && (
-                    <div className="mb-4">
-                      <span className="text-sm text-gray-600">
-                        Near: {foodplace.nearbyPandals.join(', ')}
-                      </span>
-                    </div>
-                  )}
-
-                  <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                  {/* <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
                     View Details
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ))}

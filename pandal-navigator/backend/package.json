@@ -10,7 +10,12 @@
     "geocode": "node scripts/geocodePandals.js",
     "test": "jest",
     "check": "node scripts/checkSetup.js",
-    "test-maps": "node scripts/testGoogleMaps.js"
+    "test-maps": "node scripts/testGoogleMaps.js",
+    "check-atlas": "node scripts/checkAtlas.js",
+    "test-atlas": "node scripts/checkAtlas.js test",
+    "migrate-atlas": "node scripts/migrateToAtlas.js",
+    "export-data": "node scripts/exportData.js",
+    "geocode-atlas": "node scripts/geocodeAtlas.js"
   },
   "keywords": [
     "durga-puja",
@@ -37,6 +42,7 @@
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "pdfkit": "^0.17.2",
     "svix": "^1.15.0"
   },
   "devDependencies": {

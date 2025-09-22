@@ -2,7 +2,6 @@ const express = require('express');
 const { body } = require('express-validator');
 const {
   getPandals,
-  getPandal,
   createPandal,
   updatePandal,
   deletePandal,
@@ -48,7 +47,6 @@ router.get('/', getPandals);
 router.get('/popular', getPopularPandals);
 router.get('/area/:area', getPandalsByArea);
 router.get('/radius/:lat/:lng/:distance', getPandalsInRadius);
-router.get('/:id', getPandal);
 router.get('/:id/reviews', getPandalReviews);
 
 // Protected routes

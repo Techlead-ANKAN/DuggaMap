@@ -25,6 +25,12 @@ const PandalList = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'map'
   
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
+  const [totalPandals, setTotalPandals] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 100; // Show 100 pandals per page
+  
   // Filters
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedArea, setSelectedArea] = useState(searchParams.get('area') || '');
@@ -60,7 +66,8 @@ const PandalList = () => {
         area: selectedArea || undefined,
         category: selectedCategory || undefined,
         sort: sortBy || undefined,
-        limit: 50,
+        page: currentPage,
+        limit: itemsPerPage,
       };
 
       // Remove undefined values
@@ -75,6 +82,8 @@ const PandalList = () => {
       ]);
 
       setPandals(pandalsResponse.data.data);
+      setTotalPandals(pandalsResponse.data.total);
+      setTotalPages(pandalsResponse.data.pagination.pages);
       setFoodplaces(foodplacesResponse.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -92,14 +101,20 @@ const PandalList = () => {
     if (selectedArea) params.set('area', selectedArea);
     if (selectedCategory) params.set('category', selectedCategory);
     if (sortBy !== 'name') params.set('sort', sortBy);
+    if (currentPage !== 1) params.set('page', currentPage.toString());
     
     setSearchParams(params);
-  }, [searchQuery, selectedArea, selectedCategory, sortBy, setSearchParams]);
+  }, [searchQuery, selectedArea, selectedCategory, sortBy, currentPage, setSearchParams]);
 
   // Fetch data when filters change
   useEffect(() => {
-    fetchPandals();
+    setCurrentPage(1); // Reset to first page when filters change
   }, [searchQuery, selectedArea, selectedCategory, sortBy]);
+
+  // Fetch data when page changes or filters change
+  useEffect(() => {
+    fetchPandals();
+  }, [currentPage, searchQuery, selectedArea, selectedCategory, sortBy]);
 
   // Handle search
   const handleSearch = (e) => {
@@ -115,6 +130,13 @@ const PandalList = () => {
     setSelectedArea('');
     setSelectedCategory('');
     setSortBy('name');
+    setCurrentPage(1);
+  };
+
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handle pandal click from map
@@ -292,7 +314,12 @@ const PandalList = () => {
             {/* Results Count */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-600">
-                Found {pandals.length} pandal{pandals.length !== 1 ? 's' : ''}
+                Found {totalPandals} pandal{totalPandals !== 1 ? 's' : ''}
+                {totalPages > 1 && (
+                  <span className="ml-2">
+                    (Page {currentPage} of {totalPages})
+                  </span>
+                )}
               </p>
             </div>
 
@@ -334,6 +361,57 @@ const PandalList = () => {
                   className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
                 >
                   Clear Filters
+                </button>
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && pandals.length > 0 && (
+              <div className="flex items-center justify-center space-x-2 mt-8">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                
+                {/* Page Numbers */}
+                <div className="flex space-x-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-3 py-2 rounded-md text-sm font-medium ${
+                          currentPage === pageNum
+                            ? 'bg-orange-600 text-white'
+                            : 'border border-gray-300 bg-white text-gray-500 hover:bg-gray-50'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
                 </button>
               </div>
             )}

@@ -3,8 +3,316 @@ const { validationResult } = require('express-validator');
 const Route = require('../models/Route');
 const Pandal = require('../models/Pandal');
 const FoodPlace = require('../models/FoodPlace');
-const googleMapsService = require('../utils/googleMaps');
-const routeOptimizer = require('../utils/routeOptimizer');
+const PDFDocument = require('pdfkit');
+
+// Calculate distance between two coordinates (Haversine formula)
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radius of the Earth in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c; // Distance in kilometers
+  return distance;
+};
+
+// Simple TSP algorithm using nearest neighbor heuristic
+const optimizeRouteOrder = (points, priority = 'shortest-distance') => {
+  if (points.length <= 2) return points;
+
+  const visited = new Set();
+  const route = [];
+  let currentPoint = points[0];
+  route.push(currentPoint);
+  visited.add(0);
+
+  while (visited.size < points.length) {
+    let nextIndex = -1;
+    let bestScore = Infinity;
+
+    for (let i = 0; i < points.length; i++) {
+      if (visited.has(i)) continue;
+
+      let score;
+      const point = points[i];
+      const distance = calculateDistance(
+        currentPoint.location.latitude,
+        currentPoint.location.longitude,
+        point.location.latitude,
+        point.location.longitude
+      );
+
+      switch (priority) {
+        case 'shortest-time':
+          // Assume 30 km/h average speed in city + 15 min visit time
+          score = (distance / 30) * 60 + 15; // minutes
+          break;
+        case 'popularity':
+          // Prioritize popular pandals but consider distance
+          score = distance - (point.averageRating || 0) * 2;
+          break;
+        default: // shortest-distance
+          score = distance;
+      }
+
+      if (score < bestScore) {
+        bestScore = score;
+        nextIndex = i;
+      }
+    }
+
+    if (nextIndex !== -1) {
+      currentPoint = points[nextIndex];
+      route.push(currentPoint);
+      visited.add(nextIndex);
+    }
+  }
+
+  return route;
+};
+
+// Calculate total distance and time for a route
+const calculateRouteStats = (route) => {
+  let totalDistance = 0;
+  let totalTime = 0;
+
+  for (let i = 0; i < route.length - 1; i++) {
+    const distance = calculateDistance(
+      route[i].location.latitude,
+      route[i].location.longitude,
+      route[i + 1].location.latitude,
+      route[i + 1].location.longitude
+    );
+    totalDistance += distance;
+    totalTime += (distance / 30) * 60; // Assume 30 km/h average speed
+  }
+
+  // Add visit time for each pandal (15 minutes each)
+  totalTime += route.length * 15;
+
+  return {
+    totalDistance: `${totalDistance.toFixed(1)} km`,
+    estimatedTime: `${Math.round(totalTime)} minutes`
+  };
+};
+
+// @desc    Optimize route based on different cases
+// @route   POST /api/routes/optimize
+// @access  Public
+const optimizeNewRoute = async (req, res, next) => {
+  try {
+    console.log('Route optimization request:', req.body);
+    const { routeType, startPoint, endPoint, area, pandals, priority = 'shortest-distance' } = req.body;
+
+    let routePandals = [];
+    let routePoints = [];
+
+    switch (routeType) {
+      case 'start-end-area':
+        // Get pandals from specific area
+        const areaPandals = await Pandal.find({ 
+          areaCategory: { $regex: area, $options: 'i' }
+        });
+        console.log(`Found ${areaPandals.length} pandals for area: ${area}`);
+
+        // Add start and end points as virtual locations
+        const startLocation = {
+          _id: 'start',
+          name: startPoint,
+          location: { latitude: 22.5726, longitude: 88.3639 }, // Default to Kolkata center
+          isCustomPoint: true
+        };
+        const endLocation = {
+          _id: 'end',
+          name: endPoint,
+          location: { latitude: 22.5726, longitude: 88.3639 }, // Default to Kolkata center
+          isCustomPoint: true
+        };
+
+        routePoints = [startLocation, ...areaPandals, endLocation];
+        break;
+
+      case 'area-only':
+        // Get all pandals from specific area
+        routePandals = await Pandal.find({ 
+          areaCategory: { $regex: area, $options: 'i' }
+        });
+        console.log(`Found ${routePandals.length} pandals for area: ${area}`);
+        routePoints = routePandals;
+        break;
+
+      case 'custom-pandals':
+        // Get specific pandals by IDs
+        console.log('Looking for pandals with IDs:', pandals);
+        routePandals = await Pandal.find({ _id: { $in: pandals } });
+        console.log(`Found ${routePandals.length} pandals for custom selection`);
+        routePoints = routePandals;
+        break;
+
+      default:
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid route type'
+        });
+    }
+
+    if (routePoints.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No pandals found for the specified criteria'
+      });
+    }
+
+    // Filter out pandals without valid location data
+    const validRoutePoints = routePoints.filter(point => {
+      if (!point.location || 
+          typeof point.location.latitude !== 'number' || 
+          typeof point.location.longitude !== 'number' ||
+          isNaN(point.location.latitude) ||
+          isNaN(point.location.longitude)) {
+        console.warn(`Skipping pandal ${point.name} - invalid location data:`, point.location);
+        return false;
+      }
+      return true;
+    });
+
+    console.log(`Valid points after filtering: ${validRoutePoints.length}/${routePoints.length}`);
+
+    if (validRoutePoints.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No pandals with valid location data found'
+      });
+    }
+
+    // Optimize the route
+    const optimizedRoute = optimizeRouteOrder(validRoutePoints, priority);
+    const routeStats = calculateRouteStats(optimizedRoute);
+
+    // Format the route for frontend
+    const formattedRoute = optimizedRoute.map((point, index) => ({
+      id: point._id,
+      name: point.name,
+      address: point.address || point.area || point.location?.area || 'Unknown location',
+      latitude: point.location.latitude,
+      longitude: point.location.longitude,
+      isCustomPoint: point.isCustomPoint || false,
+      step: index + 1,
+      distance: index < optimizedRoute.length - 1 ? 
+        `${calculateDistance(
+          point.location.latitude,
+          point.location.longitude,
+          optimizedRoute[index + 1].location.latitude,
+          optimizedRoute[index + 1].location.longitude
+        ).toFixed(1)} km` : null
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        route: formattedRoute,
+        totalDistance: routeStats.totalDistance,
+        estimatedTime: routeStats.estimatedTime,
+        routeType,
+        priority,
+        area: area || null
+      }
+    });
+
+  } catch (error) {
+    console.error('Route optimization error:', error);
+    console.error('Error stack:', error.stack);
+    
+    res.status(500).json({
+      success: false,
+      message: 'Failed to optimize route',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
+
+// @desc    Generate and download route PDF
+// @route   POST /api/routes/download
+// @access  Public
+const downloadRoutePDF = async (req, res, next) => {
+  try {
+    const { route, routeType, priority } = req.body;
+
+    if (!route || !route.route) {
+      return res.status(400).json({
+        success: false,
+        message: 'Route data is required'
+      });
+    }
+
+    // Create PDF document
+    const doc = new PDFDocument({ margin: 50 });
+    
+    // Set response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="durga-puja-route.pdf"');
+
+    // Pipe PDF to response
+    doc.pipe(res);
+
+    // Header
+    doc.fontSize(20).fillColor('#000').text('🚩 Durga Puja Pandal Route Guide', { align: 'center' });
+    doc.moveDown();
+
+    // Route details box
+    doc.rect(50, doc.y, 500, 80).stroke();
+    doc.fontSize(12).text(`Route Type: ${routeType.replace('-', ' ').toUpperCase()}`, 60, doc.y + 10);
+    doc.text(`Optimization: ${priority.replace('-', ' ').toUpperCase()}`, 60, doc.y + 5);
+    doc.text(`Total Distance: ${route.totalDistance}`, 60, doc.y + 5);
+    doc.text(`Estimated Time: ${route.estimatedTime}`, 60, doc.y + 5);
+    doc.moveDown(2);
+
+    // Route steps
+    doc.fontSize(16).fillColor('#000').text('📍 Route Steps:', { underline: true });
+    doc.moveDown();
+
+    route.route.forEach((step, index) => {
+      // Step number circle
+      doc.circle(60, doc.y + 8, 8).fillAndStroke('#E34234', '#E34234');
+      doc.fillColor('white').fontSize(10).text(index + 1, 57, doc.y + 4);
+      
+      // Step details
+      doc.fillColor('black').fontSize(14).text(step.name, 80, doc.y - 4, { continued: false });
+      
+      if (step.address) {
+        doc.fontSize(10).fillColor('gray');
+        doc.text(`📍 ${step.address}`, 80, doc.y + 2);
+      }
+      
+      doc.fillColor('gray');
+      doc.text(`🗺️ Coordinates: ${step.latitude.toFixed(6)}, ${step.longitude.toFixed(6)}`, 80, doc.y + 2);
+      
+      if (step.distance) {
+        doc.fillColor('#E34234');
+        doc.text(`➡️ Distance to next: ${step.distance}`, 80, doc.y + 2);
+      }
+      
+      doc.fillColor('black');
+      doc.moveDown();
+    });
+
+    // Footer
+    doc.moveDown();
+    doc.fontSize(10).fillColor('gray');
+    doc.text('🙏 Generated by Durga Puja Navigator - Have a blessed journey!', { align: 'center' });
+    doc.text(`📅 Generated on: ${new Date().toLocaleString()}`, { align: 'center' });
+
+    // Finalize PDF
+    doc.end();
+
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    next(error);
+  }
+};
 
 // Google Maps API helper function
 const getGoogleMapsDirections = async (origin, destination, waypoints = [], mode = 'walking') => {
@@ -563,6 +871,8 @@ const generateAlternateRoutes = async (startPoint, endPoint, pandals, areaCatego
 };
 
 module.exports = {
+  optimizeNewRoute,
+  downloadRoutePDF,
   planRoute,
   saveRoute,
   getUserRoutes,

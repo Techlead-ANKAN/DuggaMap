@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/clerk-react';
-import { Menu, X, Home, MapPin, Utensils, LayoutDashboard, Navigation, Heart } from 'lucide-react';
+import { Menu, X, Home, MapPin, Utensils, Navigation } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,9 +11,7 @@ const Navbar = () => {
     { name: 'Home', href: '/', icon: Home, public: true },
     { name: 'Pandals', href: '/pandals', icon: MapPin, public: true },
     { name: 'Foodplaces', href: '/foodplaces', icon: Utensils, public: true },
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, public: false },
     { name: 'Plan Route', href: '/plan-route', icon: Navigation, public: false },
-    { name: 'Favorites', href: '/favorites', icon: Heart, public: false },
   ];
 
   const isActive = (href) => {

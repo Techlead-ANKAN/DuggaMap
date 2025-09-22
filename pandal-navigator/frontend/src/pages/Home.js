@@ -217,19 +217,27 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-festive text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-festive text-3xl md:text-4xl font-bold mb-4">
+      <section className="py-16 px-4 bg-gradient-to-br from-neutral-800 via-neutral-700 to-neutral-900 text-white relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-8 left-16 text-4xl">🪔</div>
+          <div className="absolute top-12 right-20 text-3xl">🌺</div>
+          <div className="absolute bottom-8 left-20 text-3xl">🪷</div>
+          <div className="absolute bottom-12 right-16 text-4xl">🕉️</div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-white">
             Make this Durga Puja unforgettable
           </h2>
-          <p className="text-lg mb-8 opacity-90">
+          <p className="text-lg mb-8 text-neutral-200 leading-relaxed">
             Discover Kolkata's best pandals and create lasting memories
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               to="/pandals" 
-              className="btn-festive-secondary inline-flex items-center justify-center space-x-2"
+              className="inline-flex items-center justify-center space-x-2 px-8 py-3 bg-gradient-to-r from-gold-500 to-gold-600 text-neutral-900 font-semibold rounded-xl hover:from-gold-400 hover:to-gold-500 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
             >
               <span>View all Pandals</span>
               <Star className="h-5 w-5" />
@@ -238,7 +246,7 @@ const Home = () => {
             {!isSignedIn && (
               <Link 
                 to="/sign-up" 
-                className="btn-festive-outline bg-white/10 backdrop-blur-sm inline-flex items-center justify-center space-x-2"
+                className="inline-flex items-center justify-center space-x-2 px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/30 text-white font-medium rounded-xl hover:bg-white/20 hover:border-white/50 transition-all duration-200"
               >
                 <span>Join Us</span>
                 <Users className="h-5 w-5" />

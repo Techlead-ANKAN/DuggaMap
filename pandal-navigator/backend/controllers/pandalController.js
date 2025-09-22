@@ -12,7 +12,7 @@ const getPandals = async (req, res, next) => {
       theme,
       crowdLevel,
       page = 1,
-      limit = 10,
+      limit = 100, // Increased default limit from 10 to 100
       sort = 'name',
       search,
       lat,
@@ -112,31 +112,6 @@ const getPandals = async (req, res, next) => {
         pages: Math.ceil(total / limitNum)
       },
       data: pandals
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// @desc    Get single pandal
-// @route   GET /api/pandals/:id
-// @access  Public
-const getPandal = async (req, res, next) => {
-  try {
-    const pandal = await Pandal.findOne({
-      _id: req.params.id
-    });
-
-    if (!pandal) {
-      return res.status(404).json({
-        success: false,
-        message: 'Pandal not found'
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: pandal
     });
   } catch (error) {
     next(error);
@@ -358,14 +333,15 @@ const getPopularPandals = async (req, res, next) => {
 const getPandalsByArea = async (req, res, next) => {
   try {
     const { area } = req.params;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 100 } = req.query; // Increased default limit to 100
 
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
+    // Fixed: Use areaCategory field instead of location.area
     const pandals = await Pandal.find({
-      'location.area': { $regex: area, $options: 'i' }
+      areaCategory: { $regex: area, $options: 'i' }
     })
       .sort({ name: 1 })
       .skip(skip)
@@ -373,7 +349,7 @@ const getPandalsByArea = async (req, res, next) => {
       .lean();
 
     const total = await Pandal.countDocuments({
-      'location.area': { $regex: area, $options: 'i' }
+      areaCategory: { $regex: area, $options: 'i' }
     });
 
     res.status(200).json({
@@ -394,7 +370,6 @@ const getPandalsByArea = async (req, res, next) => {
 
 module.exports = {
   getPandals,
-  getPandal,
   createPandal,
   updatePandal,
   deletePandal,

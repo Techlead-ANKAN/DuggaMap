@@ -10,7 +10,9 @@ const {
   shareRoute,
   getPopularRoutes,
   getRoutesByArea,
-  optimizeRoute
+  optimizeRoute,
+  optimizeNewRoute,
+  downloadRoutePDF
 } = require('../controllers/routeController');
 const { protect } = require('../middleware/clerkAuth');
 
@@ -44,6 +46,8 @@ const routePlanValidation = [
 // Public routes
 router.get('/popular', getPopularRoutes);
 router.get('/area/:areaCategory', getRoutesByArea);
+router.post('/optimize', optimizeNewRoute);
+router.post('/download', downloadRoutePDF);
 
 // Protected routes
 router.post('/plan', protect, routePlanValidation, planRoute);
