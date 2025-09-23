@@ -78,13 +78,13 @@ const PandalList = () => {
       // Fetch both pandals and foodplaces
       const [pandalsResponse, foodplacesResponse] = await Promise.all([
         apiService.pandals.getAll(params),
-        fetch('/api/foodplaces').then(res => res.json())
+        apiService.eateries.getAll()
       ]);
 
       setPandals(pandalsResponse.data.data);
       setTotalPandals(pandalsResponse.data.total);
       setTotalPages(pandalsResponse.data.pagination.pages);
-      setFoodplaces(foodplacesResponse.data || []);
+      setFoodplaces(foodplacesResponse.data.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Failed to load data. Please try again.');
