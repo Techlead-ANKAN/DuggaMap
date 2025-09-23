@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Navigation, Plus, X, Share2, Copy, Clock, Zap, ArrowRight, Map, Trash2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouteCart } from '../contexts/RouteCartContext';
+import { apiService } from '../services/api';
 
 const RoutePlanner = () => {
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const RoutePlanner = () => {
   const fetchAllPandals = async () => {
     try {
       setLoadingPandals(true);
-      const response = await axios.get('/api/pandals');
+      const response = await apiService.pandals.getAll();
       setAllPandals(response.data.data || []);
     } catch (error) {
       console.error('Error fetching pandals:', error);
@@ -89,7 +89,7 @@ const RoutePlanner = () => {
   const fetchAreaPandals = async (area) => {
     try {
       setLoadingPandals(true);
-      const response = await axios.get(`/api/pandals/area/${encodeURIComponent(area)}`);
+      const response = await apiService.pandals.getByArea(area);
       setAreaPandals(response.data.data || []);
     } catch (error) {
       console.error('Error fetching area pandals:', error);
@@ -148,12 +148,19 @@ const RoutePlanner = () => {
         startPoint: routeType === 'start-end-area' ? startPoint : null,
         endPoint: routeType === 'start-end-area' ? endPoint : null,
         area: (routeType === 'area-only' || routeType === 'start-end-area') ? selectedArea : null,
-        pandals: routeType === 'custom-pandals' ? selectedPandals.map(p => p._id) : 
-                routeType === 'area-only' ? selectedAreaPandals.map(p => p._id) : null,
         priority: routePriority
       };
 
-      const response = await axios.post('/api/routes/optimize', payload);
+      // Only include pandals if we have specific ones selected
+      if (routeType === 'custom-pandals') {
+        payload.pandals = selectedPandals.map(p => p._id);
+      } else if (routeType === 'area-only' && selectedAreaPandals.length > 0) {
+        payload.pandals = selectedAreaPandals.map(p => p._id);
+      }
+      // For area-only with no specific pandals, don't include the pandals field
+      // This allows backend to load all pandals from the area
+
+      const response = await apiService.routes.optimize(payload);
       setOptimizedRoute(response.data.data);
       toast.success('Route optimized successfully!');
       
@@ -170,7 +177,9 @@ const RoutePlanner = () => {
       case 'start-end-area':
         return startPoint && endPoint && selectedArea;
       case 'area-only':
-        return selectedArea && selectedAreaPandals.length >= 2;
+        // Allow generation if area is selected, even if no specific pandals are chosen
+        // Backend will use all pandals from area if none specifically selected
+        return selectedArea && (selectedAreaPandals.length >= 2 || selectedAreaPandals.length === 0);
       case 'custom-pandals':
         return selectedPandals.length >= 2;
       default:
