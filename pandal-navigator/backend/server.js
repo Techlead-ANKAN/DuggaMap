@@ -43,8 +43,10 @@ app.use('/api/', limiter);
 // CORS configuration
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  process.env.CORS_ORIGIN,
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://duggamap.vercel.app',
   'https://vercel.app',
   'https://netlify.app'
 ].filter(Boolean);
@@ -59,9 +61,17 @@ app.use(cors({
       }
     }
     
-    if (allowedOrigins.some(allowedOrigin => origin.includes(allowedOrigin))) {
+    // Check for exact matches or subdomain matches
+    if (allowedOrigins.some(allowedOrigin => {
+      return origin === allowedOrigin || 
+             origin.includes(allowedOrigin) || 
+             origin.includes('duggamap.vercel.app') ||
+             origin.includes('vercel.app');
+    })) {
       callback(null, true);
     } else {
+      console.log('🚨 CORS blocked origin:', origin);
+      console.log('🔧 Allowed origins:', allowedOrigins);
       callback(new Error('Not allowed by CORS'));
     }
   },
