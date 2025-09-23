@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Navigation, Plus, X, Share2, Copy, Clock, TrendingUp, Zap, ArrowRight, Map, Trash2, ExternalLink } from 'lucide-react';
+import { ArrowLeft, MapPin, Navigation, Plus, X, Share2, Copy, Clock, Zap, ArrowRight, Map, Trash2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -26,11 +26,10 @@ const RoutePlanner = () => {
   const [loadingPandals, setLoadingPandals] = useState(false);
   const [showMobileShareMenu, setShowMobileShareMenu] = useState(false);
 
-  const areas = ['North Kolkata', 'Central Kolkata', 'South Kolkata'];
+  const areas = ['North Kolkata', 'South Kolkata'];
   const priorityOptions = [
     { value: 'shortest-distance', label: 'Shortest Distance', icon: ArrowRight },
-    { value: 'shortest-time', label: 'Shortest Time', icon: Clock },
-    { value: 'popularity', label: 'Most Popular First', icon: TrendingUp }
+    { value: 'shortest-time', label: 'Shortest Time', icon: Clock }
   ];
 
   // Fetch all pandals on component mount

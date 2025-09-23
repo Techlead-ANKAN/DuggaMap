@@ -22,12 +22,18 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
+
+// Trust proxy (required for rate limiting behind reverse proxies)
+app.set('trust proxy', 1);
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
   message: {
     error: 'Too many requests from this IP, please try again later.',
   },
@@ -36,30 +42,26 @@ app.use('/api/', limiter);
 
 // CORS configuration
 const allowedOrigins = [
+  process.env.FRONTEND_URL,
   'http://localhost:3000',
   'http://localhost:3001',
-  'http://192.168.0.102:3000',
-  'http://192.168.0.102:3001',
-  'http://127.0.0.1:3000',
-  'http://127.0.0.1:3001'
-];
+  'https://vercel.app',
+  'https://netlify.app'
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    // For development, allow localhost and 127.0.0.1 on any port
     if (process.env.NODE_ENV !== 'production') {
       if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
         return callback(null, true);
       }
     }
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (allowedOrigins.some(allowedOrigin => origin.includes(allowedOrigin))) {
       callback(null, true);
     } else {
-      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -74,17 +76,21 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(clerkMiddleware());
 
 // Logging middleware
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
+} else {
+  app.use(morgan('combined'));
 }
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pandal-navigator', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('✅ Connected to MongoDB');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('✅ Connected to MongoDB');
+  }
 })
 .catch((error) => {
   console.error('❌ MongoDB connection error:', error);
@@ -95,9 +101,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pandal-na
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Pandal Navigator API is running!',
+    message: 'DuggaMap API is running!',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -125,18 +131,25 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🌐 API Health Check: http://localhost:${PORT}/api/health`);
-  console.log(`📱 Mobile Access: http://192.168.0.102:${PORT}/api/health`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 API Health Check: http://localhost:${PORT}/api/health`);
+  }
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('👋 SIGTERM received. Shutting down gracefully...');
   server.close(() => {
-    console.log('💤 Process terminated');
     mongoose.connection.close();
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  server.close(() => {
+    mongoose.connection.close();
+    process.exit(0);
   });
 });
 

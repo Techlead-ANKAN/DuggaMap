@@ -1,40 +1,30 @@
 {
-  "name": "pandal-navigator-frontend",
-  "version": "0.1.0",
+  "name": "duggamap",
+  "version": "1.0.0",
   "private": true,
+  "description": "Durga Puja Pandal Navigator - Mobile-first route planning app",
   "dependencies": {
     "@clerk/clerk-react": "^4.29.1",
-    "@geoman-io/leaflet-geoman-free": "^2.18.3",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "autoprefixer": "^10.4.16",
     "axios": "^1.5.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
-    "leaflet": "^1.9.4",
-    "leaflet-control-geocoder": "^3.3.1",
-    "leaflet-routing-machine": "^3.2.12",
     "lucide-react": "^0.284.0",
-    "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.5.0",
-    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.16.0",
     "react-scripts": "^5.0.1",
-    "tailwindcss": "^3.3.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test --watchAll=false",
+    "eject": "react-scripts eject",
+    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js"
   },
   "eslintConfig": {
     "extends": [
@@ -55,7 +45,9 @@
     ]
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.8"
-  },
-  "proxy": "http://localhost:5000"
+    "@types/leaflet": "^1.9.8",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.3"
+  }
 }

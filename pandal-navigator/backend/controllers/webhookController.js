@@ -27,7 +27,9 @@ const handleClerkWebhook = async (req, res) => {
 
     const { type, data } = evt;
     
-    console.log(`Received Clerk webhook: ${type}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Received Clerk webhook: ${type}`);
+    }
 
     switch (type) {
       case 'user.created':
@@ -47,7 +49,9 @@ const handleClerkWebhook = async (req, res) => {
         break;
         
       default:
-        console.log(`Unhandled webhook type: ${type}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`Unhandled webhook type: ${type}`);
+        }
     }
 
     res.status(200).json({ received: true });
@@ -60,10 +64,10 @@ const handleClerkWebhook = async (req, res) => {
 // Handle user creation
 const handleUserCreated = async (userData) => {
   try {
-    console.log('Creating user from webhook:', userData.id);
-    
     const user = await User.findOrCreateFromClerk(userData);
-    console.log('User created successfully:', user._id);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('User created successfully:', user._id);
+    }
   } catch (error) {
     console.error('Error creating user from webhook:', error);
   }
