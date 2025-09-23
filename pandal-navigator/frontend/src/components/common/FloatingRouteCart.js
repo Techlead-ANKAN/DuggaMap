@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaShoppingCart, FaRoute, FaTimes, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaRoute, FaTimes } from 'react-icons/fa';
 import { useRouteCart } from '../../contexts/RouteCartContext';
 
 const FloatingRouteCart = () => {

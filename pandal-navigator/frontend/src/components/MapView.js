@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
@@ -119,7 +119,6 @@ const NavigationControl = ({ currentLocation, destination, onNavigationStart, is
 
 // Location Tracker Component
 const LocationTracker = ({ onLocationUpdate, isTracking }) => {
-  const map = useMap();
   const watchId = useRef(null);
 
   useEffect(() => {
