@@ -136,11 +136,18 @@ const optimizeNewRoute = async (req, res, next) => {
         break;
 
       case 'area-only':
-        // Get all pandals from specific area
-        routePandals = await Pandal.find({ 
-          areaCategory: { $regex: area, $options: 'i' }
-        });
-        console.log(`Found ${routePandals.length} pandals for area: ${area}`);
+        // Use selected pandals from the area (not all pandals)
+        if (pandals && pandals.length > 0) {
+          // Use specific pandals selected by user
+          routePandals = await Pandal.find({ _id: { $in: pandals } });
+          console.log(`Found ${routePandals.length} selected pandals for area route`);
+        } else {
+          // Fallback: Get all pandals from specific area
+          routePandals = await Pandal.find({ 
+            areaCategory: { $regex: area, $options: 'i' }
+          });
+          console.log(`Found ${routePandals.length} pandals for area: ${area}`);
+        }
         routePoints = routePandals;
         break;
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Navigation, Plus, X, Download, Clock, TrendingUp, Zap, ArrowRight, Map, Trash2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Navigation, Plus, X, Share2, Copy, Clock, TrendingUp, Zap, ArrowRight, Map, Trash2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -24,6 +24,7 @@ const RoutePlanner = () => {
   const [optimizedRoute, setOptimizedRoute] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingPandals, setLoadingPandals] = useState(false);
+  const [showMobileShareMenu, setShowMobileShareMenu] = useState(false);
 
   const areas = ['North Kolkata', 'Central Kolkata', 'South Kolkata'];
   const priorityOptions = [
@@ -58,6 +59,20 @@ const RoutePlanner = () => {
       setSelectedAreaPandals(areaPandals);
     }
   }, [areaPandals, routeType]);
+
+  // Close mobile share menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showMobileShareMenu && !event.target.closest('.mobile-share-menu')) {
+        setShowMobileShareMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMobileShareMenu]);
 
   const fetchAllPandals = async () => {
     try {
@@ -161,6 +176,84 @@ const RoutePlanner = () => {
         return selectedPandals.length >= 2;
       default:
         return false;
+    }
+  };
+
+  // Sharing Functions
+  const generateShareableContent = () => {
+    if (!optimizedRoute) return null;
+    
+    const routeDetails = optimizedRoute.route || [];
+    const pandalNames = routeDetails.map((pandal, index) => `${index + 1}. ${pandal.name}`).join('\n');
+    
+    const shareText = `🎯 My Optimized Durga Puja Route\n\n${pandalNames}\n\n📍 Total Distance: ${optimizedRoute.totalDistance || 'N/A'}\n⏱️ Estimated Time: ${optimizedRoute.estimatedTime || 'N/A'}\n\nPlan your route with DuggaMap! 🗺️`;
+    const shareUrl = window.location.href;
+    
+    return { shareText, shareUrl };
+  };
+
+  const shareToWhatsApp = () => {
+    const { shareText } = generateShareableContent();
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    window.open(whatsappUrl, '_blank');
+    toast.success('Opening WhatsApp...');
+  };
+
+  const shareToFacebook = () => {
+    const { shareUrl } = generateShareableContent();
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, '_blank');
+    toast.success('Opening Facebook...');
+  };
+
+  const copyShareLink = async () => {
+    const { shareText, shareUrl } = generateShareableContent();
+    const fullShareContent = `${shareText}\n\n${shareUrl}`;
+    
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(fullShareContent);
+        toast.success('Route details copied to clipboard!');
+      } else {
+        // Fallback for older browsers or non-HTTPS
+        const textArea = document.createElement('textarea');
+        textArea.value = fullShareContent;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+        toast.success('Route details copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Failed to copy:', error);
+      toast.error('Failed to copy. Please try again.');
+    }
+  };
+
+  const shareViaWebShare = async () => {
+    const { shareText, shareUrl } = generateShareableContent();
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My Durga Puja Route',
+          text: shareText,
+          url: shareUrl,
+        });
+        toast.success('Route shared successfully!');
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Error sharing:', error);
+          toast.error('Failed to share. Please try another method.');
+        }
+      }
+    } else {
+      // Fallback to copy link if Web Share API is not supported
+      copyShareLink();
     }
   };
 
@@ -487,10 +580,48 @@ const RoutePlanner = () => {
                 <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-800">Optimized Route</h3>
-                    <button className="bg-green-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-green-600 transition-colors flex items-center space-x-1">
-                      <Download className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>Download</span>
-                    </button>
+                    
+                    {/* Share Options - Mobile First */}
+                    <div className="flex items-center space-x-2">
+                      {/* Mobile: Share Button */}
+                      <button 
+                        onClick={() => setShowMobileShareMenu(true)}
+                        className="sm:hidden bg-orange-500 text-white p-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center justify-center min-w-[36px] min-h-[36px]"
+                        title="Share Route"
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </button>
+                      
+                      {/* Desktop: Individual Share Options */}
+                      <div className="hidden sm:flex items-center space-x-2">
+                        <button 
+                          onClick={shareToWhatsApp}
+                          className="bg-green-500 text-white px-3 py-2 rounded-lg text-xs hover:bg-green-600 transition-colors flex items-center space-x-1"
+                          title="Share on WhatsApp"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          <span>WhatsApp</span>
+                        </button>
+                        
+                        <button 
+                          onClick={shareToFacebook}
+                          className="bg-blue-600 text-white px-3 py-2 rounded-lg text-xs hover:bg-blue-700 transition-colors flex items-center space-x-1"
+                          title="Share on Facebook"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          <span>Facebook</span>
+                        </button>
+                        
+                        <button 
+                          onClick={copyShareLink}
+                          className="bg-gray-600 text-white px-3 py-2 rounded-lg text-xs hover:bg-gray-700 transition-colors flex items-center space-x-1"
+                          title="Copy Link"
+                        >
+                          <Copy className="h-3 w-3" />
+                          <span>Copy</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     {optimizedRoute.route.map((step, index) => (
@@ -519,6 +650,95 @@ const RoutePlanner = () => {
           </div>
         </div>
       </div>
+      
+      {/* Mobile Share Menu Modal */}
+      {showMobileShareMenu && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:hidden">
+          <div className="mobile-share-menu bg-white w-full rounded-t-2xl p-6 transform transition-transform duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Share Your Route</h3>
+              <button 
+                onClick={() => setShowMobileShareMenu(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              {/* WhatsApp Share */}
+              <button 
+                onClick={() => {
+                  shareToWhatsApp();
+                  setShowMobileShareMenu(false);
+                }}
+                className="w-full flex items-center space-x-4 p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-colors"
+              >
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                  <ExternalLink className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-gray-800">Share on WhatsApp</div>
+                  <div className="text-sm text-gray-600">Send route to friends and family</div>
+                </div>
+              </button>
+              
+              {/* Facebook Share */}
+              <button 
+                onClick={() => {
+                  shareToFacebook();
+                  setShowMobileShareMenu(false);
+                }}
+                className="w-full flex items-center space-x-4 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors"
+              >
+                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                  <ExternalLink className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-gray-800">Share on Facebook</div>
+                  <div className="text-sm text-gray-600">Post to your timeline</div>
+                </div>
+              </button>
+              
+              {/* Copy Link */}
+              <button 
+                onClick={() => {
+                  copyShareLink();
+                  setShowMobileShareMenu(false);
+                }}
+                className="w-full flex items-center space-x-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                  <Copy className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-gray-800">Copy Link</div>
+                  <div className="text-sm text-gray-600">Copy route details to clipboard</div>
+                </div>
+              </button>
+              
+              {/* Native Share (if supported) */}
+              {navigator.share && (
+                <button 
+                  onClick={() => {
+                    shareViaWebShare();
+                    setShowMobileShareMenu(false);
+                  }}
+                  className="w-full flex items-center space-x-4 p-4 bg-orange-50 hover:bg-orange-100 rounded-xl transition-colors"
+                >
+                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                    <Share2 className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="font-medium text-gray-800">More Options</div>
+                    <div className="text-sm text-gray-600">Use device sharing options</div>
+                  </div>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
