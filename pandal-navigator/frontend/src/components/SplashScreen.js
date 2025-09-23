@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Custom CSS for white background removal
 const logoStyles = `
@@ -55,9 +55,24 @@ const logoStyles = `
 `;
 
 const SplashScreen = ({ onFinish }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
   const playAudioAndContinue = async () => {
     try {
-      const audio = new Audio('/splash_screen.mp3');
+      // Use process.env.PUBLIC_URL for better path resolution in production
+      const audioPath = `${process.env.PUBLIC_URL || ''}/splash_screen.mp3`;
+      const audio = new Audio(audioPath);
+      
+      // Add error handling for audio loading
+      audio.addEventListener('error', () => {
+        console.log('Audio file not found or failed to load');
+        // Continue without audio
+        setTimeout(() => {
+          onFinish();
+        }, 1000);
+      });
+      
       await audio.play();
       
       // Wait for audio to finish (4 seconds) then call onFinish
@@ -82,15 +97,29 @@ const SplashScreen = ({ onFinish }) => {
         {/* Logo Container */}
         <div className="flex-1 flex items-center justify-center mb-8">
           <div className="relative logo-container">
-            <img
-              src="/durga_image.jpg"
-              alt="Durga Puja Logo"
-              className="max-w-full max-h-full object-contain w-auto h-auto logo-no-white"
-              style={{
-                maxWidth: '80vw',
-                maxHeight: '50vh'
-              }}
-            />
+            {!imageError ? (
+              <img
+                src={`${process.env.PUBLIC_URL || ''}/durga_image.jpg`}
+                alt="Durga Puja Logo"
+                className="max-w-full max-h-full object-contain w-auto h-auto logo-no-white"
+                style={{
+                  maxWidth: '80vw',
+                  maxHeight: '50vh'
+                }}
+                onLoad={() => setImageLoaded(true)}
+                onError={() => {
+                  console.log('Logo image failed to load');
+                  setImageError(true);
+                }}
+              />
+            ) : (
+              // Fallback content when image fails to load
+              <div className="text-center">
+                <h1 className="text-6xl font-bold text-primary mb-4">🪔</h1>
+                <h2 className="text-2xl font-bold text-primary">দুর্গা পূজা</h2>
+                <p className="text-lg text-gray-600">Navigator</p>
+              </div>
+            )}
           </div>
         </div>
         

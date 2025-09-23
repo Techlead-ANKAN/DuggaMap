@@ -16,6 +16,13 @@
       "dest": "/static/$1"
     },
     {
+      "src": "/(.*\\.(png|jpg|jpeg|gif|svg|mp3|wav|mp4|ico|webp))",
+      "dest": "/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=86400"
+      }
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
