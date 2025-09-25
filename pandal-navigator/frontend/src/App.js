@@ -22,6 +22,9 @@ import RouteDetail from './pages/RouteDetail';
 import SharedRoute from './pages/SharedRoute';
 import Profile from './pages/Profile';
 
+
+import { Analytics } from "@vercel/analytics/react"
+
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   return (
@@ -237,6 +240,9 @@ const AppContent = () => {
           },
         }}
       />
+
+      {/* Vercel Analytics */}
+      <Analytics />
     </div>
   );
 };
